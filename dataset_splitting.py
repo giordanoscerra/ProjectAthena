@@ -33,3 +33,27 @@ print(f"title Distribution (Train): {train_title_distribution}")
 print(f"school Distribution (Test): {test_school_distribution}")
 print(f"Author Distribution (Test): {test_author_distribution}")
 print(f"title Distribution (Test): {test_title_distribution}")
+
+# Check if sums of distributions are equal to 1 in train and test
+train_school_sum = train_school_distribution.sum()
+train_author_sum = train_author_distribution.sum()
+train_title_sum = train_title_distribution.sum()
+test_school_sum = test_school_distribution.sum()
+test_author_sum = test_author_distribution.sum()
+test_title_sum = test_title_distribution.sum()
+
+print(f"Sum of school Distribution (Train): {train_school_sum}")
+print(f"Sum of Author Distribution (Train): {train_author_sum}")
+print(f"Sum of title Distribution (Train): {train_title_sum}")
+print(f"Sum of school Distribution (Test): {test_school_sum}")
+print(f"Sum of Author Distribution (Test): {test_author_sum}")
+print(f"Sum of title Distribution (Test): {test_title_sum}")
+
+# Check the distances between the distributions of train and test
+school_distribution_distance = train_school_distribution.subtract(test_school_distribution).abs().sum()
+author_distribution_distance = train_author_distribution.subtract(test_author_distribution).abs().sum()
+title_distribution_distance = train_title_distribution.subtract(test_title_distribution).abs().sum()
+
+print(f"School Distribution Distance: {school_distribution_distance}")
+print(f"Author Distribution Distance: {author_distribution_distance}")
+print(f"Title Distribution Distance: {title_distribution_distance}")
