@@ -59,8 +59,9 @@ if __name__ == '__main__':
     plt.show()
     print(model.score(x_test, y_test))
 
-    print("give me a sentence: ")
-    sentence = input()
-    sentence = addNegationsToken(sentence)
-    sentence = vectorizer.transform([sentence])
-    print(model.predict(sentence))
+    while True:
+        print("give me a sentence: ")
+        sentence = input()
+        sentence = addNegationsToken(sentence)
+        sentence = vectorizer.transform([sentence])
+        print(model.predict(sentence))
