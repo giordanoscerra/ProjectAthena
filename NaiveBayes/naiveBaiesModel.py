@@ -57,6 +57,7 @@ if __name__ == '__main__':
     disp.plot()
     plt.xticks(rotation=45)
     plt.show()
+    print(model.score(x_train, y_train))
     print(model.score(x_test, y_test))
 
     while True:
