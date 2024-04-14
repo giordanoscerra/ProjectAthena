@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     # fitprior (to set whether to learn class prior probabilities or not)
     # alpha (smoothing parameter)
-    model = MultinomialNB(alpha=0.1, fit_prior=True)
+    model = MultinomialNB(alpha=0.06, fit_prior=True)
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
 
