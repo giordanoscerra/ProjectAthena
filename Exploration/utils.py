@@ -1,7 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 from sklearn.feature_extraction.text import CountVectorizer
 import wordcloud 
+import os
 
 
 def create_bow(school:str, dataframe,
@@ -33,8 +34,18 @@ def create_bow(school:str, dataframe,
 def make_wordcloud(text:str, 
                    stopwords:Optional[List[str]] = None, 
                    bgcolor:str = 'white'):
+    """Creates a wordcloud for a given text
+
+    Args:
+        text (str): the text to generate the wordcloud from
+        stopwords (List[str], optional): words to exclude from the wordcloud. Defaults to None.
+        bgcolor (str, optional): The background color of the wordcloud. Defaults to 'white'.
+
+    Returns:
+        wordcloud.WordCloud: the generated wordcloud
+    """
     cloud = wordcloud.WordCloud(
-                width = 800, height = 800,
+                width = 2000, height = 1100,
                 background_color = bgcolor,
                 stopwords = stopwords,
                 min_font_size = 8).generate(text)
@@ -59,3 +70,13 @@ def create_bigstring(school: str, dataframe) -> str:
         text += separator + stringa
     
     return text
+
+def save_plot(plot, 
+              filename:str,
+              folder:str='Images', 
+              format:str='png') -> None:
+    if not filename.endswith(format):
+        filename = filename.split('.')[0] + '.' + format
+
+    fig_path = os.path.join(folder, filename)
+    plot.savefig(fig_path, format=format)
