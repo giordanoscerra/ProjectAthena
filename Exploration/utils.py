@@ -22,7 +22,7 @@ def create_bow(school:str,
 
     vectorizer = CountVectorizer(
         analyzer='word',
-        stop_words=stopwords    # leap of faith here
+        stop_words=stopwords
         )
     # learn vocabulary, return term-document matrix
     vector = vectorizer.fit_transform(texts)
