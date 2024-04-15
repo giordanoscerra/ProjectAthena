@@ -2,12 +2,10 @@ from sklearn.naive_bayes import MultinomialNB
 import pandas as pd
 import re
 from nltk.corpus import stopwords
-
-SCHOOLS = ['analytic','aristotle','german_idealism',
-           'plato','continental','phenomenology',
-           'rationalism','empiricism','feminism',
-           'capitalism','communism','nietzsche',
-           'stoicism']
+import os
+import sys
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from scoring import SCHOOLS, scorePhylosophy
     
 def getData()->pd.DataFrame:
     return pd.read_csv('philosophy_data.csv')
@@ -49,7 +47,7 @@ if __name__ == '__main__':
 
     # fitprior (to set whether to learn class prior probabilities or not)
     # alpha (smoothing parameter)
-    model = MultinomialNB(alpha=0.05, fit_prior=True)
+    model = MultinomialNB(alpha=0.06, fit_prior=True)
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
 
@@ -57,6 +55,9 @@ if __name__ == '__main__':
     ########### End of the main code ###########
     ############################################
     
+
+    scorePhylosophy(pred, y_test, showConfusionMatrix=False)
+    exit()
     cm = confusion_matrix(y_test, pred, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
     disp.plot()
