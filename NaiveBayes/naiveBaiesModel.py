@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
     #x_train, x_test, y_train, y_test = splitData(addNegationsToData(getData()))
     x_train, x_test, y_train, y_test = splitData(getData())
-    vectorizer = CountVectorizer(analyzer='word', stop_words=getStopWords())
-    #vectorizer = CountVectorizer()
+    #vectorizer = CountVectorizer(analyzer='word', stop_words=getStopWords())
+    vectorizer = CountVectorizer()
     x_train = vectorizer.fit_transform(x_train)
     x_test = vectorizer.transform(x_test)
 
@@ -60,8 +60,12 @@ if __name__ == '__main__':
     cm = confusion_matrix(y_test, pred, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
     disp.plot()
+    #make plot bigger
+    plt.gcf().set_size_inches(12, 12)
     plt.xticks(rotation=45)
+    #plt.savefig('bestNaive.png', dpi=300)
     plt.show()
+    #save the plot in hd
     print(model.score(x_train, y_train))
     print(model.score(x_test, y_test))
 
