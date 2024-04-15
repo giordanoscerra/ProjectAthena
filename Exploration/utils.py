@@ -5,7 +5,8 @@ import wordcloud
 import os
 
 
-def create_bow(school:str, dataframe,
+def create_bow(school:str, 
+               dataframe,
                stopwords:Optional[str|List] = None) -> Dict[str,int]:
     """Returns a bag of words of the given school.
 
@@ -31,7 +32,7 @@ def create_bow(school:str, dataframe,
     return wc_dict
 
 # function that creates the wordcloud
-def make_wordcloud(text:str, 
+def make_wordcloud(bow:Dict[str,int], 
                    stopwords:Optional[List[str]] = None, 
                    bgcolor:str = 'white'):
     """Creates a wordcloud for a given text
@@ -48,28 +49,9 @@ def make_wordcloud(text:str,
                 width = 2000, height = 1100,
                 background_color = bgcolor,
                 stopwords = stopwords,
-                min_font_size = 8).generate(text)
+                min_font_size = 8).generate_from_frequencies(frequencies = bow)
     
     return cloud
-
-
-def create_bigstring(school: str, dataframe) -> str:
-    """Concatenates all the sentences of a given school 
-    (as stored in the dataframe) into one big string
-
-    Args:
-        school (str): the philosophical school
-        dataframe (pandas.core.frame.DataFrame): the dataframe with all the philosophical data
-
-    Returns:
-        str: the concatenated sentences relative to the school
-    """
-    text = ''
-    separator = ' '
-    for stringa in dataframe.loc[dataframe['school'] == school,'sentence_str']:
-        text += separator + stringa
-    
-    return text
 
 def save_plot(plot, 
               filename:str,
