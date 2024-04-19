@@ -5,13 +5,7 @@ from nltk.corpus import stopwords
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from scoring import SCHOOLS, scorePhilosophy
-    
-def getData()->pd.DataFrame:
-    return pd.read_csv('philosophy_data.csv')
-
-def splitData(data:pd.DataFrame)->tuple:
-    return train_test_split(data['sentence_str'], data['school'], test_size=0.25, random_state=42)
+from scoring import *
 
 def getStopWords()->list:
     return stopwords.words('english')
