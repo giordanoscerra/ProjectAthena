@@ -21,14 +21,23 @@ print(embed.get_config())
 embed.trainable = True
 print(embed.get_config())
 regularizer = keras.regularizers.l2(0.0001)
-nn = keras.Sequential([
-    keras.Input(shape=[], dtype=tf.string),
-    embed,
-    layers.Dense(256, activation='relu', kernel_regularizer=regularizer),
-    layers.Dense(128, activation='relu', kernel_regularizer=regularizer),
-    layers.Dense(64, activation='relu', kernel_regularizer=regularizer),
-    layers.Dense(13, activation='softmax', kernel_regularizer=regularizer)
-])
+class MyModel(keras.Model):
+  def __init__(self):
+    super(MyModel, self).__init__()
+    self.embedding_layer = embed
+    self.dense_layer1 = layers.Dense(256, activation='relu', kernel_regularizer=regularizer)
+    self.dense_layer2 = layers.Dense(128, activation='relu', kernel_regularizer=regularizer)
+    self.dense_layer3 = layers.Dense(64, activation='relu', kernel_regularizer=regularizer)
+    self.output_layer = layers.Dense(13, activation='softmax', kernel_regularizer=regularizer)
+
+  def call(self, inputs):
+    x = self.embedding_layer(inputs)
+    x = self.dense_layer1(x)
+    x = self.dense_layer2(x)
+    x = self.dense_layer3(x)
+    return self.output_layer(x)
+
+nn = MyModel()
 
 print("compiling model")
 nn.compile(loss=keras.losses.CategoricalCrossentropy(),
