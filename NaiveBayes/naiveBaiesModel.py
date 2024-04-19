@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from scoring import SCHOOLS, scorePhylosophy
+from scoring import SCHOOLS, scorePhilosophy
     
 def getData()->pd.DataFrame:
     return pd.read_csv('philosophy_data.csv')
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     ############################################
     
 
-    scorePhylosophy(pred, y_test, showConfusionMatrix=False)
+    scorePhilosophy(pred, y_test, showConfusionMatrix=False)
     exit()
     cm = confusion_matrix(y_test, pred, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)

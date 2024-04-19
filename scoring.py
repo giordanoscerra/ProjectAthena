@@ -8,7 +8,7 @@ SCHOOLS = ['analytic','aristotle','german_idealism',
            'capitalism','communism','nietzsche',
            'stoicism']
 
-def scorePhylosophy(prediction: 'list[str]', ground_truth: 'list[str]', saveName:str=None, showConfusionMatrix:bool=False) -> None:
+def scorePhilosophy(prediction: 'list[str]', ground_truth: 'list[str]', saveName:str=None, showConfusionMatrix:bool=False) -> None:
     cm = confusion_matrix(ground_truth, prediction, labels=SCHOOLS, normalize='true')
     if showConfusionMatrix:
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
