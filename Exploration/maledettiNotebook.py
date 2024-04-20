@@ -1,6 +1,6 @@
 import os
 import sys
-BASE_PATH = '..'
+#BASE_PATH = '..'
 
 # More imports:
 import pandas as pd
@@ -17,11 +17,13 @@ df = pd.read_csv('philosophy_data.csv')
 
 MAX_TOKENS = 1074
 
-def check_conditions(df:pd.DataFrame, index:int) -> bool:
+
+def check_conditions(df:pd.DataFrame, 
+                     index:int,
+                     accumulated_l:int) -> bool:
     check = True
-    if index > 0:
-        prev = index-1
-        check = check and (df['title'].loc[prev] == df['title'].loc[index])
+    if index>0:
+        check = check and (df['title'].loc[index-1] == df['title'].loc[index])
         # I skip checks on authors and schools.
         # If the book changes then the author changes, 
         # and therefore the school changes as well (this has been checked)
@@ -30,11 +32,12 @@ def check_conditions(df:pd.DataFrame, index:int) -> bool:
         # (who needs those anyway)
         
         # 
-        check = check and (df['sentence_length'].loc[prev] + df['sentence_length'].loc[index] < MAX_TOKENS + 2)
-
+        check = check and (accumulated_l + df['sentence_length'].loc[index] < MAX_TOKENS + 2)
     return check
 
 df_new = pd.DataFrame(columns=df.columns)
+print(f'Beginning shape of df_new is {df_new.shape}')
+
 
 i = 0
 while i < 100:#df.shape[0]:
@@ -46,9 +49,9 @@ while i < 100:#df.shape[0]:
     lemmatized_str = ''
 
     # hopefully I don't mess up with the indexing...
-    while check_conditions(df,i):
+    while check_conditions(df,index=i,accumulated_l=sentence_length):
         sentence_spacy += df['sentence_spacy'].loc[i] + ' '
-        sentence_length += 1 + df['sentence_length'].loc[i]
+        sentence_length += (i==0)*1 + df['sentence_length'].loc[i]
         sentence_lowered += df['sentence_lowered'].loc[i] + ' '
         tokenized_txt += df['tokenized_txt'].loc[i][1:-1] + ', '
         lemmatized_str += df['lemmatized_str'].loc[i]
@@ -64,10 +67,11 @@ while i < 100:#df.shape[0]:
         'sentence_str': sentence_spacy[:-1],
         'original_publication_date': df['original_publication_date'].loc[i],
         'corpus_edition_date': df['corpus_edition_date'].loc[i],
-        'sentence_lenght': sentence_length,
+        'sentence_length': sentence_length,
         'sentence_lowered': sentence_lowered[:-1],
         'tokenized_txt': '[' + tokenized_txt[:-2] + ']',
         'lemmatized_str': lemmatized_str
     }
-
-    df_new = df_new._append(row, ignore_index=True)
+    df_hold = pd.DataFrame([row])
+    df_new = pd.concat([df_new, df_hold])
+    #df_new = df_new._append(row, ignore_index=True)
