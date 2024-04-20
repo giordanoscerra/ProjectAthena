@@ -35,4 +35,5 @@ y_pred = model.predict(X_test)
 
 scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_test,
-                showConfusionMatrix=True)
+                showConfusionMatrix=True,
+                saveName='NB_TF-Idf')
