@@ -50,8 +50,8 @@ nn.compile(loss=keras.losses.CategoricalCrossentropy(),
 # Load the dataset
 x_train, x_test, y_train, y_test = splitData(filterShortPhrases(getData(), numWords=0), test_size=0.30)
 #keep 20% of test
-x_test = x_test[:int(len(x_test)*0.2)]
-y_test = y_test[:int(len(y_test)*0.2)]
+x_test = x_test[:int(len(x_test)*0.66)]
+y_test = y_test[:int(len(y_test)*0.66)]
 #assign each school a number
 y_train = y_train.apply(lambda x: SCHOOLS.index(x))
 y_test = y_test.apply(lambda x: SCHOOLS.index(x))
