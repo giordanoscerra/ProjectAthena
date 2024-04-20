@@ -10,11 +10,11 @@ SCHOOLS = ['analytic','aristotle','german_idealism',
 
 def scorePhilosophy(prediction: 'list[str]', ground_truth: 'list[str]', saveName:str=None, showConfusionMatrix:bool=False) -> None:
     cm = confusion_matrix(ground_truth, prediction, labels=SCHOOLS, normalize='true')
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
+    disp.plot()
+    plt.gcf().set_size_inches(12, 12)
+    plt.xticks(rotation=45)
     if showConfusionMatrix:
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
-        disp.plot()
-        plt.gcf().set_size_inches(12, 12)
-        plt.xticks(rotation=45)
         plt.show()
     if saveName:
         plt.savefig(saveName, dpi=300)
