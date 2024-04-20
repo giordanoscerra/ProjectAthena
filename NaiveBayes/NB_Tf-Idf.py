@@ -42,4 +42,5 @@ y_pred = model.predict(X_val)
 scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_val,
                 showConfusionMatrix=True,
+                saveFolder='NaiveBayes/Images',
                 saveName='NB_TF-Idf')
