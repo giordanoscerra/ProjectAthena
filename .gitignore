@@ -1,2 +1,5 @@
 
 philosophy_data.csv
+/archive
+/__pycache__
+*.h5
