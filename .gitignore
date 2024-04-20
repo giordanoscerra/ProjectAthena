@@ -1,5 +1,8 @@
 
 philosophy_data.csv
+/archive
+/__pycache__
+*.h5
 
 .DS_Store
 
