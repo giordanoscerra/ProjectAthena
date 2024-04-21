@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from keras.layers import TextVectorization
+from keras.layers import TextVectorization, Embedding
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -25,28 +25,17 @@ if use_tensorflow_dataset:
     dataset = tf.data.Dataset.load("dset.dataset")
   else:
     df = pd.read_csv('philosophy_data.csv')
-    print("read csv")
-
-    # one-hot encode the schools
-    # df['school'] = pd.Categorical(df['school'])
 
     dataset_features = df.copy()
     dset_schools = dataset_features.pop('school')
     dset_sentences = dataset_features.pop('sentence_str')
 
-    print("got schools and senteces")
-
     features_dict = {name: np.array(value) for name, value in dset_sentences.items()}
 
     features_dict = tf.placeholder(tf.string, [None])
-
-    print("created features dict")
-
     bs = 1024
     seed = 23
     dataset = tf.data.Dataset.from_tensor_slices(features_dict)
-
-    print("sliced")
 
     step_counter = tf.Variable(0, trainable=False)
     checkpoint_args = {
@@ -57,7 +46,6 @@ if use_tensorflow_dataset:
     }
     dataset.save(dataset, save_dir, checkpoint_args=checkpoint_args)
 
-  print("created dataset")
   dset_batches = dataset.shuffle(len(dset_schools)).batch(bs)
 else:
   df = pd.read_csv('philosophy_data.csv')
@@ -71,43 +59,73 @@ else:
   y_test = lb_encoder.transform(y_test)
   y_test = to_categorical(y_test)
 
-# Split the dataset
-# train_size = int(0.8 * len(dataset))
-# val_size = int(0.1 * len(dataset))
-# train = dataset.take(train_size)
-# remaining_dataset = dataset.skip(train_size)
-# val = remaining_dataset.take(val_size)
-# test = remaining_dataset.skip(val_size)
-
-# Set vocabulary size
 unique_words = set()
 for sentence in df['sentence_str']:
     unique_words.update(sentence.split())
 
-print("got unique words")
-
 encoder = TextVectorization(max_tokens=len(unique_words), output_mode='int', pad_to_max_tokens=True)
-print("created encoder")
 encoder.adapt(list(unique_words))
-print("adapted encoder")
 
-rnn = RNN(output_units = 13, encoder = encoder, hidden_units = 20)
-print("created rnn")
+path_to_glove_file = "glove.42B.300d.txt"
 
-history = rnn.fit(x_train, y_train, epochs = 5, validation_split = 0.3)
+embeddings_index = {}
+with open(path_to_glove_file) as f:
+    for line in f:
+        word, coefs = line.split(maxsplit=1)
+        coefs = np.fromstring(coefs, "f", sep=" ")
+        embeddings_index[word] = coefs
 
-# test_loss, test_acc = rnn.evaluate(test)
+print("Found %s word vectors." % len(embeddings_index))
+
+voc = encoder.get_vocabulary()
+
+num_tokens = len(voc) + 2
+embedding_dim = 300
+hits = 0
+misses = 0
+word_index = dict(zip(voc, range(len(voc))))
+
+# Prepare embedding matrix
+embedding_matrix = np.zeros((num_tokens, embedding_dim))
+for word, i in word_index.items():
+    embedding_vector = embeddings_index.get(word)
+    if embedding_vector is not None:
+        # Words not found in embedding index will be all-zeros.
+        # This includes the representation for "padding" and "OOV"
+        embedding_matrix[i] = embedding_vector
+        hits += 1
+    else:
+        misses += 1
+print("Converted %d words (%d misses)" % (hits, misses))
+
+embedding_layer = Embedding(
+    num_tokens,
+    embedding_dim,
+    trainable=False,
+)
+# embedding_layer.build((1,))
+# embedding_layer.set_weights([embedding_matrix])
+
+rnn = RNN(output_units = 13, embedding = embedding_layer, encoder = encoder, hidden_units = 25)
+
+history = rnn.fit(x_train, y_train, epochs = 8, batch_size = 128,  validation_split = 0.25)
+
+# test_loss, test_acc = rnn.evaluate(x_test, y_test)
 # print('Test Loss:', test_loss)
 # print('Test Accuracy:', test_acc)
 
-plt.figure(figsize=(16, 8))
-plt.subplot(1, 2, 1)
-plot_graphs(history, 'accuracy')
-plt.ylim(None, 1)
-plt.subplot(1, 2, 2)
-plot_graphs(history, 'loss')
-plt.ylim(0, None)
+# plt.figure(figsize=(16, 8))
+# plt.subplot(1, 2, 1)
+# plot_graphs(history, 'accuracy')
+# plt.ylim(None, 1)
+# plt.subplot(1, 2, 2)
+# plot_graphs(history, 'loss')
+# plt.ylim(0, None)
 
-sample_text = ('We should eat all landlords')
-print("predicting \"we should eat all landlords\"")
-predictions = rnn.model.predict(sample_text)
+# evaluate micro and macro averages
+y_pred = rnn.predict(x_test)
+y_pred = np.argmax(y_pred, axis=1)
+y_test = np.argmax(y_test, axis=1)
+
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred, target_names=lb_encoder.classes_))
