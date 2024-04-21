@@ -128,3 +128,7 @@ plt.xlabel('Length of sentence')
 plt.ylabel('Accuracy')
 plt.ylim([0, 1])
 plt.show()
+
+string = 'we should eat all the landlords'
+pred = nn.predict(np.array([string]))
+print(pred)
