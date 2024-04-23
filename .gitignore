@@ -1,7 +1,20 @@
 
 philosophy_data.csv
+/archive
+/__pycache__
+*.h5
 
 *.code-workspace
+.DS_Store
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
+glove.42B.300d.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -163,3 +176,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
