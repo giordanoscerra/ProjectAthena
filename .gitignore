@@ -1,6 +1,7 @@
 
 philosophy_data.csv
 
+*.code-workspace
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
