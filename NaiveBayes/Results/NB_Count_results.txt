@@ -1,0 +1,60 @@
+Naive Bayes on the Tf-Idf weighted term-document matrix
+Scores for different values of the smoothing parameter
+
+Ran on 2024-04-27 16:18:22.265702
+
+	Smoothing parameter = 1.0
+Macroaverage precision = 0.763047470444924	Macroaverage recall = 0.68436326442985	Macroaverage F1 = 0.7022410282781395
+Macroaverage precision = 0.7545989034976371	Macroaverage recall = 0.749397189656606	Macroaverage F1 = 0.7466774060281509
+Microaverage precision = microaverage recall = microaverage F1 = 0.749397189656606
+
+	Smoothing parameter = 0.35938136638046275
+Macroaverage precision = 0.7706304860052041	Macroaverage recall = 0.7255723107271739	Macroaverage F1 = 0.7402358626544765
+Macroaverage precision = 0.7653609432175055	Macroaverage recall = 0.7629916022283196	Macroaverage F1 = 0.7623227363040894
+Microaverage precision = microaverage recall = microaverage F1 = 0.7629916022283196
+
+	Smoothing parameter = 0.12915496650148842
+Macroaverage precision = 0.7702913758412225	Macroaverage recall = 0.7464346563858685	Macroaverage F1 = 0.755649747443533
+Macroaverage precision = 0.7694808858138265	Macroaverage recall = 0.7677725118483413	Macroaverage F1 = 0.7676565544985364
+Microaverage precision = microaverage recall = microaverage F1 = 0.7677725118483413
+
+	Smoothing parameter = 0.0464158883361278
+Macroaverage precision = 0.76547432507851	Macroaverage recall = 0.7524994963275536	Macroaverage F1 = 0.7578748394450171
+Macroaverage precision = 0.7699668394180003	Macroaverage recall = 0.7686594052271278	Macroaverage F1 = 0.7686340824222296
+Microaverage precision = microaverage recall = microaverage F1 = 0.7686594052271278
+
+	Smoothing parameter = 0.016681005372000592
+Macroaverage precision = 0.7643787242224207	Macroaverage recall = 0.7524819495960665	Macroaverage F1 = 0.7574570526784108
+Macroaverage precision = 0.7694036360700207	Macroaverage recall = 0.7682298162467781	Macroaverage F1 = 0.7682112730257654
+Microaverage precision = microaverage recall = microaverage F1 = 0.7682298162467781
+
+	Smoothing parameter = 0.005994842503189409
+Macroaverage precision = 0.7630442991104782	Macroaverage recall = 0.7505239546730257	Macroaverage F1 = 0.7558021380415495
+Macroaverage precision = 0.767914666329485	Macroaverage recall = 0.7668856184695546	Macroaverage F1 = 0.7668248114420303
+Microaverage precision = microaverage recall = microaverage F1 = 0.7668856184695546
+
+	Smoothing parameter = 0.0021544346900318843
+Macroaverage precision = 0.7614785761936406	Macroaverage recall = 0.7474916038500599	Macroaverage F1 = 0.753373265220172
+Macroaverage precision = 0.7657896426178578	Macroaverage recall = 0.7648901083672848	Macroaverage F1 = 0.7647768169248195
+Microaverage precision = microaverage recall = microaverage F1 = 0.7648901083672848
+
+	Smoothing parameter = 0.0007742636826811277
+Macroaverage precision = 0.7601812193247282	Macroaverage recall = 0.7449556181114598	Macroaverage F1 = 0.7513616133799947
+Macroaverage precision = 0.7638886904131529	Macroaverage recall = 0.7630747484825808	Macroaverage F1 = 0.7629175241516786
+Microaverage precision = microaverage recall = microaverage F1 = 0.7630747484825808
+
+	Smoothing parameter = 0.0002782559402207126
+Macroaverage precision = 0.7580149582875675	Macroaverage recall = 0.7414350080912089	Macroaverage F1 = 0.7483634428802206
+Macroaverage precision = 0.7613920057767883	Macroaverage recall = 0.7606219339818742	Macroaverage F1 = 0.7604336974618017
+Microaverage precision = microaverage recall = microaverage F1 = 0.7606219339818742
+
+	Smoothing parameter = 0.0001
+Macroaverage precision = 0.7559105632458128	Macroaverage recall = 0.7383444440788031	Macroaverage F1 = 0.7456643992092222
+Macroaverage precision = 0.7595992280461565	Macroaverage recall = 0.7588620049333444	Macroaverage F1 = 0.7586513355695685
+Microaverage precision = microaverage recall = microaverage F1 = 0.7588620049333444
+
+	Smoothing parameter = 0.0
+Macroaverage precision = 0.7115865024723539	Macroaverage recall = 0.6377713858555505	Macroaverage F1 = 0.665530278564053
+Macroaverage precision = 0.701303775190121	Macroaverage recall = 0.6842105263157895	Macroaverage F1 = 0.6857394945394674
+Microaverage precision = microaverage recall = microaverage F1 = 0.6842105263157895
+
