@@ -8,5 +8,9 @@ def getData(validation_size:float=0.2, test_size:float=0.1)-> tuple[pd.DataFrame
     #split vslidation ant train from train
     if validation_size == 0:
         return development, None, test
-    train, validation = train_test_split(development, test_size=validation_size/(1 - test_size), stratify=development['school'], random_state=42, shuffle=True)
+    train, validation = train_test_split(development, 
+                                         test_size=validation_size/(1 - test_size), 
+                                         stratify=development['school'], 
+                                         random_state=42, 
+                                         shuffle=True)
     return train, validation, test
