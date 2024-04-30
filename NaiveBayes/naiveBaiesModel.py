@@ -5,13 +5,8 @@ from nltk.corpus import stopwords
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from scoring import SCHOOLS, scorePhilosophy
-    
-def getData()->pd.DataFrame:
-    return pd.read_csv('philosophy_data.csv')
-
-def splitData(data:pd.DataFrame)->tuple:
-    return train_test_split(data['sentence_str'], data['school'], test_size=0.25, random_state=42)
+from scoring import scorePhilosophy
+from utilities import *
 
 def getStopWords()->list:
     return stopwords.words('english')
@@ -38,25 +33,32 @@ if __name__ == '__main__':
     ######### Beging of the main code  #########
     ############################################
 
-    #x_train, x_test, y_train, y_test = splitData(addNegationsToData(getData()))
-    x_train, x_test, y_train, y_test = splitData(getData())
+    tr, vl, _ = getData()
+
+    x_train = tr['sentence_str']
+    y_train = tr['school']
+    x_val = vl['sentence_str']
+    y_val = vl['school']
     #vectorizer = CountVectorizer(analyzer='word', stop_words=getStopWords())
     vectorizer = CountVectorizer()
     x_train = vectorizer.fit_transform(x_train)
-    x_test = vectorizer.transform(x_test)
+    x_val = vectorizer.transform(x_val)
 
     # fitprior (to set whether to learn class prior probabilities or not)
     # alpha (smoothing parameter)
     model = MultinomialNB(alpha=0.06, fit_prior=True)
     model.fit(x_train, y_train)
-    pred = model.predict(x_test)
+    pred = model.predict(x_val)
 
     ############################################
     ########### End of the main code ###########
     ############################################
     
 
-    scorePhilosophy(pred, y_test, showConfusionMatrix=False)
+    scorePhilosophy(pred, y_val, showConfusionMatrix=False, saveName='bestNaive.png')
+    string = 'we should eat all the landlords'
+    pred = model.predict(vectorizer.transform([string]))
+    print(pred)
     exit()
     cm = confusion_matrix(y_test, pred, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)

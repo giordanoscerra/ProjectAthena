@@ -1,7 +1,9 @@
 import os
 from matplotlib import pyplot as plt
 import numpy as np
-from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classification_report
+import pandas as pd
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classification_report, f1_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
 
 from typing import List
 
@@ -32,3 +34,12 @@ def scorePhilosophy(prediction: List[str],
                                 target_names=SCHOOLS,
                                 #labels=list(range(1,14))
                                 ))
+
+def getData()->pd.DataFrame:
+    return pd.read_csv('philosophy_data.csv')
+
+def splitData(data:pd.DataFrame, test_size=0.25)->tuple:
+    return train_test_split(data['sentence_str'], data['school'], test_size=test_size, random_state=42)
+
+def filterShortPhrases(data:pd.DataFrame, numWords)->pd.DataFrame:
+    return data[data['sentence_str'].apply(lambda x: len(x.split())>numWords)]
