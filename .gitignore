@@ -6,6 +6,9 @@ philosophy_data.csv
 
 .DS_Store
 
+# .gitignore the workspace files (Andrea uses it)
+*.code-workspace
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
