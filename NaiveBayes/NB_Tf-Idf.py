@@ -8,10 +8,11 @@ from datetime import datetime
 
 from sklearn.naive_bayes import MultinomialNB 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from scoring import scorePhilosophy
-from utilities import getData
+from sklearn.model_selection import ParameterGrid
 
 from sklearn.metrics import precision_recall_fscore_support, f1_score
+from scoring import scorePhilosophy
+from utilities import getData
 
 # file, folder, path... Where to record our numbers
 # Pathing is a nightmare in python...
@@ -43,39 +44,61 @@ with open(FILEPATH, 'w') as file:
     file.write(f'Ran on {datetime.now()}\n\n')
 
 
-smoothing = np.append(1/np.logspace(0,4,num=10),0) #0,4,num=10 or 0,3,num=4
+# declare the parameters for grid search
+full_grid = {
+    'alpha': list(np.append(1/np.logspace(0,4,num=10),0)),
+    'fit_prior': [True, False]
+}
+
 pars_results = []
-for smooth_par in smoothing:
-    model = MultinomialNB(alpha=smooth_par, fit_prior=True)
+for parameters in ParameterGrid(full_grid):
+    model = MultinomialNB(**parameters)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_val)
 
     with open(FILEPATH, 'a') as file:
-        file.write(f'\tSmoothing parameter = {smooth_par}\n')
+        for key, value in parameters.items():
+            rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
+            file.write(f'\t{key} = ' + rest)
+        file.write('\n')    
+
         macroPrec, macroRec, macroF1, _ = precision_recall_fscore_support(y_val, y_pred, zero_division=0.0, average='macro')
-        file.write(f'Macroaverage precision = {macroPrec}\t') 
-        file.write(f'Macroaverage recall = {macroRec}\t')
-        file.write(f'Macroaverage F1 = {macroF1}\n')
+        file.write(f'Macroaverage precision = {macroPrec:<10.5f}\t') 
+        file.write(f'Macroaverage recall = {macroRec:<10.5f}\t')
+        file.write(f'Macroaverage F1 = {macroF1:<10.5f}\n')
 
         weightedPrec, weightedRec, weightedF1, _ = precision_recall_fscore_support(y_val, y_pred, zero_division=0.0, average='weighted')
-        file.write(f'Macroaverage precision = {weightedPrec}\t')
-        file.write(f'Macroaverage recall = {weightedRec}\t')
-        file.write(f'Macroaverage F1 = {weightedF1}\n')
+        file.write(f'Macroaverage precision = {weightedPrec:<10.5f}\t')
+        file.write(f'Macroaverage recall = {weightedRec:<10.5f}\t')
+        file.write(f'Macroaverage F1 = {weightedF1:<10.5f}\n')
 
         micro = f1_score(y_true=y_val, y_pred=y_pred, average='micro')
-        file.write(f'Microaverage precision = microaverage recall = microaverage F1 = {micro}\n')
+        file.write(f'Microaverage precision = microaverage recall = microaverage F1 = {micro:<10.5f}\n')
         file.write('\n')
 
     # I choose as a reference metric the microaverage F1
-    pars_results.append((f1_score(y_true=y_val, y_pred=y_pred, average='micro'),smooth_par))
+    pars_results.append((f1_score(y_true=y_val, y_pred=y_pred, average='micro'),parameters))
 
 # Let's look for the best
-best_f1, best_alpha = sorted(pars_results)[-1]
-print(f'Found that best smoothing parameter is {best_alpha}')
-print(f'Which gave a F1 score on the validation set of {best_f1}')
+best_f1, best_parameters = sorted(pars_results)[-1]
+
+# print the best parameters on file
+with open(FILEPATH, 'a') as file:
+    file.write('\n\n\t\tBest parameters found:\n')
+    for key, value in best_parameters.items():
+        rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
+        file.write(f'\t{key} = ' + rest)
+    file.write('\n')
+    file.write(f'F1 score on the validation set = {best_f1:.4f}\n')
+
+# print the best parameters on screen
+print('Found that best parameters are: ')
+for key, value in best_parameters.items():
+    print(f'{key} = {value}')
+print(f'This combination gave a F1 score on the validation set of {best_f1}')
 
 # we can retrain now. Shall we do it on Tr + Val? How??
-model = MultinomialNB(alpha=best_alpha, fit_prior=True)
+model = MultinomialNB(**best_parameters)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_val)
 
@@ -83,7 +106,7 @@ y_pred = model.predict(X_val)
 scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_val,
                 modelName='Naive Bayes (Tf-Idf)',
-                subtitle=f'smoothing parameter = {best_alpha:.4f}',
+                subtitle=f'alpha = {best_parameters['alpha']:.4f}, fit_prior = {best_parameters['fit_prior']}',
                 showConfusionMatrix=True,
                 saveFolder='NaiveBayes/Images',
                 saveName='NB_TF-Idf')

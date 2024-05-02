@@ -1,60 +1,120 @@
 Naive Bayes on the Tf-Idf weighted term-document matrix
 Scores for different values of the smoothing parameter
 
-Ran on 2024-04-27 16:18:22.265702
+Ran on 2024-05-02 22:43:18.962628
 
-	Smoothing parameter = 1.0
-Macroaverage precision = 0.763047470444924	Macroaverage recall = 0.68436326442985	Macroaverage F1 = 0.7022410282781395
-Macroaverage precision = 0.7545989034976371	Macroaverage recall = 0.749397189656606	Macroaverage F1 = 0.7466774060281509
-Microaverage precision = microaverage recall = microaverage F1 = 0.749397189656606
+	alpha = 1.000000  		fit_prior = True	
+Macroaverage precision = 0.76305   	Macroaverage recall = 0.68436   	Macroaverage F1 = 0.70224   
+Macroaverage precision = 0.75460   	Macroaverage recall = 0.74940   	Macroaverage F1 = 0.74668   
+Microaverage precision = microaverage recall = microaverage F1 = 0.74940   
 
-	Smoothing parameter = 0.35938136638046275
-Macroaverage precision = 0.7706304860052041	Macroaverage recall = 0.7255723107271739	Macroaverage F1 = 0.7402358626544765
-Macroaverage precision = 0.7653609432175055	Macroaverage recall = 0.7629916022283196	Macroaverage F1 = 0.7623227363040894
-Microaverage precision = microaverage recall = microaverage F1 = 0.7629916022283196
+	alpha = 1.000000  		fit_prior = False	
+Macroaverage precision = 0.72303   	Macroaverage recall = 0.69794   	Macroaverage F1 = 0.70564   
+Macroaverage precision = 0.75131   	Macroaverage recall = 0.74976   	Macroaverage F1 = 0.74838   
+Microaverage precision = microaverage recall = microaverage F1 = 0.74976   
 
-	Smoothing parameter = 0.12915496650148842
-Macroaverage precision = 0.7702913758412225	Macroaverage recall = 0.7464346563858685	Macroaverage F1 = 0.755649747443533
-Macroaverage precision = 0.7694808858138265	Macroaverage recall = 0.7677725118483413	Macroaverage F1 = 0.7676565544985364
-Microaverage precision = microaverage recall = microaverage F1 = 0.7677725118483413
+	alpha = 0.359381  		fit_prior = True	
+Macroaverage precision = 0.77063   	Macroaverage recall = 0.72557   	Macroaverage F1 = 0.74024   
+Macroaverage precision = 0.76536   	Macroaverage recall = 0.76299   	Macroaverage F1 = 0.76232   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76299   
 
-	Smoothing parameter = 0.0464158883361278
-Macroaverage precision = 0.76547432507851	Macroaverage recall = 0.7524994963275536	Macroaverage F1 = 0.7578748394450171
-Macroaverage precision = 0.7699668394180003	Macroaverage recall = 0.7686594052271278	Macroaverage F1 = 0.7686340824222296
-Microaverage precision = microaverage recall = microaverage F1 = 0.7686594052271278
+	alpha = 0.359381  		fit_prior = False	
+Macroaverage precision = 0.73557   	Macroaverage recall = 0.73899   	Macroaverage F1 = 0.73598   
+Macroaverage precision = 0.76253   	Macroaverage recall = 0.75935   	Macroaverage F1 = 0.75968   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75935   
 
-	Smoothing parameter = 0.016681005372000592
-Macroaverage precision = 0.7643787242224207	Macroaverage recall = 0.7524819495960665	Macroaverage F1 = 0.7574570526784108
-Macroaverage precision = 0.7694036360700207	Macroaverage recall = 0.7682298162467781	Macroaverage F1 = 0.7682112730257654
-Microaverage precision = microaverage recall = microaverage F1 = 0.7682298162467781
+	alpha = 0.129155  		fit_prior = True	
+Macroaverage precision = 0.77029   	Macroaverage recall = 0.74643   	Macroaverage F1 = 0.75565   
+Macroaverage precision = 0.76948   	Macroaverage recall = 0.76777   	Macroaverage F1 = 0.76766   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76777   
 
-	Smoothing parameter = 0.005994842503189409
-Macroaverage precision = 0.7630442991104782	Macroaverage recall = 0.7505239546730257	Macroaverage F1 = 0.7558021380415495
-Macroaverage precision = 0.767914666329485	Macroaverage recall = 0.7668856184695546	Macroaverage F1 = 0.7668248114420303
-Microaverage precision = microaverage recall = microaverage F1 = 0.7668856184695546
+	alpha = 0.129155  		fit_prior = False	
+Macroaverage precision = 0.73167   	Macroaverage recall = 0.75856   	Macroaverage F1 = 0.74257   
+Macroaverage precision = 0.76659   	Macroaverage recall = 0.76158   	Macroaverage F1 = 0.76258   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76158   
 
-	Smoothing parameter = 0.0021544346900318843
-Macroaverage precision = 0.7614785761936406	Macroaverage recall = 0.7474916038500599	Macroaverage F1 = 0.753373265220172
-Macroaverage precision = 0.7657896426178578	Macroaverage recall = 0.7648901083672848	Macroaverage F1 = 0.7647768169248195
-Microaverage precision = microaverage recall = microaverage F1 = 0.7648901083672848
+	alpha = 0.046416  		fit_prior = True	
+Macroaverage precision = 0.76547   	Macroaverage recall = 0.75250   	Macroaverage F1 = 0.75787   
+Macroaverage precision = 0.76997   	Macroaverage recall = 0.76866   	Macroaverage F1 = 0.76863   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76866   
 
-	Smoothing parameter = 0.0007742636826811277
-Macroaverage precision = 0.7601812193247282	Macroaverage recall = 0.7449556181114598	Macroaverage F1 = 0.7513616133799947
-Macroaverage precision = 0.7638886904131529	Macroaverage recall = 0.7630747484825808	Macroaverage F1 = 0.7629175241516786
-Microaverage precision = microaverage recall = microaverage F1 = 0.7630747484825808
+	alpha = 0.046416  		fit_prior = False	
+Macroaverage precision = 0.72843   	Macroaverage recall = 0.76288   	Macroaverage F1 = 0.74142   
+Macroaverage precision = 0.76823   	Macroaverage recall = 0.76234   	Macroaverage F1 = 0.76367   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76234   
 
-	Smoothing parameter = 0.0002782559402207126
-Macroaverage precision = 0.7580149582875675	Macroaverage recall = 0.7414350080912089	Macroaverage F1 = 0.7483634428802206
-Macroaverage precision = 0.7613920057767883	Macroaverage recall = 0.7606219339818742	Macroaverage F1 = 0.7604336974618017
-Microaverage precision = microaverage recall = microaverage F1 = 0.7606219339818742
+	alpha = 0.016681  		fit_prior = True	
+Macroaverage precision = 0.76438   	Macroaverage recall = 0.75248   	Macroaverage F1 = 0.75746   
+Macroaverage precision = 0.76940   	Macroaverage recall = 0.76823   	Macroaverage F1 = 0.76821   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76823   
 
-	Smoothing parameter = 0.0001
-Macroaverage precision = 0.7559105632458128	Macroaverage recall = 0.7383444440788031	Macroaverage F1 = 0.7456643992092222
-Macroaverage precision = 0.7595992280461565	Macroaverage recall = 0.7588620049333444	Macroaverage F1 = 0.7586513355695685
-Microaverage precision = microaverage recall = microaverage F1 = 0.7588620049333444
+	alpha = 0.016681  		fit_prior = False	
+Macroaverage precision = 0.72663   	Macroaverage recall = 0.76182   	Macroaverage F1 = 0.73960   
+Macroaverage precision = 0.76798   	Macroaverage recall = 0.76206   	Macroaverage F1 = 0.76350   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76206   
 
-	Smoothing parameter = 0.0
-Macroaverage precision = 0.7115865024723539	Macroaverage recall = 0.6377713858555505	Macroaverage F1 = 0.665530278564053
-Macroaverage precision = 0.701303775190121	Macroaverage recall = 0.6842105263157895	Macroaverage F1 = 0.6857394945394674
-Microaverage precision = microaverage recall = microaverage F1 = 0.6842105263157895
+	alpha = 0.005995  		fit_prior = True	
+Macroaverage precision = 0.76304   	Macroaverage recall = 0.75052   	Macroaverage F1 = 0.75580   
+Macroaverage precision = 0.76791   	Macroaverage recall = 0.76689   	Macroaverage F1 = 0.76682   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76689   
 
+	alpha = 0.005995  		fit_prior = False	
+Macroaverage precision = 0.72474   	Macroaverage recall = 0.75924   	Macroaverage F1 = 0.73749   
+Macroaverage precision = 0.76609   	Macroaverage recall = 0.76036   	Macroaverage F1 = 0.76179   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76036   
+
+	alpha = 0.002154  		fit_prior = True	
+Macroaverage precision = 0.76148   	Macroaverage recall = 0.74749   	Macroaverage F1 = 0.75337   
+Macroaverage precision = 0.76579   	Macroaverage recall = 0.76489   	Macroaverage F1 = 0.76478   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76489   
+
+	alpha = 0.002154  		fit_prior = False	
+Macroaverage precision = 0.72283   	Macroaverage recall = 0.75549   	Macroaverage F1 = 0.73511   
+Macroaverage precision = 0.76406   	Macroaverage recall = 0.75870   	Macroaverage F1 = 0.76007   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75870   
+
+	alpha = 0.000774  		fit_prior = True	
+Macroaverage precision = 0.76018   	Macroaverage recall = 0.74496   	Macroaverage F1 = 0.75136   
+Macroaverage precision = 0.76389   	Macroaverage recall = 0.76307   	Macroaverage F1 = 0.76292   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76307   
+
+	alpha = 0.000774  		fit_prior = False	
+Macroaverage precision = 0.72138   	Macroaverage recall = 0.75286   	Macroaverage F1 = 0.73335   
+Macroaverage precision = 0.76217   	Macroaverage recall = 0.75709   	Macroaverage F1 = 0.75840   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75709   
+
+	alpha = 0.000278  		fit_prior = True	
+Macroaverage precision = 0.75801   	Macroaverage recall = 0.74144   	Macroaverage F1 = 0.74836   
+Macroaverage precision = 0.76139   	Macroaverage recall = 0.76062   	Macroaverage F1 = 0.76043   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76062   
+
+	alpha = 0.000278  		fit_prior = False	
+Macroaverage precision = 0.71914   	Macroaverage recall = 0.74909   	Macroaverage F1 = 0.73061   
+Macroaverage precision = 0.75983   	Macroaverage recall = 0.75494   	Macroaverage F1 = 0.75622   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75494   
+
+	alpha = 0.000100  		fit_prior = True	
+Macroaverage precision = 0.75591   	Macroaverage recall = 0.73834   	Macroaverage F1 = 0.74566   
+Macroaverage precision = 0.75960   	Macroaverage recall = 0.75886   	Macroaverage F1 = 0.75865   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75886   
+
+	alpha = 0.000100  		fit_prior = False	
+Macroaverage precision = 0.71713   	Macroaverage recall = 0.74586   	Macroaverage F1 = 0.72825   
+Macroaverage precision = 0.75766   	Macroaverage recall = 0.75293   	Macroaverage F1 = 0.75419   
+Microaverage precision = microaverage recall = microaverage F1 = 0.75293   
+
+	alpha = 0.000000  		fit_prior = True	
+Macroaverage precision = 0.71159   	Macroaverage recall = 0.63777   	Macroaverage F1 = 0.66553   
+Macroaverage precision = 0.70130   	Macroaverage recall = 0.68421   	Macroaverage F1 = 0.68574   
+Microaverage precision = microaverage recall = microaverage F1 = 0.68421   
+
+	alpha = 0.000000  		fit_prior = False	
+Macroaverage precision = 0.66812   	Macroaverage recall = 0.64341   	Macroaverage F1 = 0.65184   
+Macroaverage precision = 0.69345   	Macroaverage recall = 0.67839   	Macroaverage F1 = 0.68116   
+Microaverage precision = microaverage recall = microaverage F1 = 0.67839   
+
+
+
+		Best parameters found:
+	alpha = 0.046416  		fit_prior = True	
+F1 score on the validation set = 0.7687
