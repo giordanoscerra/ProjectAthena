@@ -15,6 +15,8 @@ SCHOOLS = ['analytic','aristotle','german_idealism',
 
 def scorePhilosophy(prediction: List[str], 
                     ground_truth: List[str], 
+                    modelName:str = '',
+                    subtitle:str = '',
                     saveName:str=None, 
                     saveFolder:str='..',
                     showConfusionMatrix:bool=False) -> None:
@@ -23,6 +25,9 @@ def scorePhilosophy(prediction: List[str],
     disp.plot()
     plt.gcf().set_size_inches(12, 12)
     plt.xticks(rotation=45)
+    plt.suptitle(f'{modelName} Confusion matrix', fontweight='bold', fontsize=20)
+    if subtitle != '':
+        plt.title(subtitle, fontsize=16)
     if saveName:
         fig_path = os.path.join(saveFolder, saveName)
         plt.savefig(fig_path, dpi=300)

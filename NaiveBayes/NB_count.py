@@ -7,7 +7,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from datetime import datetime
 
 from sklearn.naive_bayes import MultinomialNB 
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import ParameterGrid
 
 from sklearn.metrics import precision_recall_fscore_support, f1_score
@@ -17,7 +17,7 @@ from utilities import getData
 # file, folder, path... Where to record our numbers
 # Pathing is a nightmare in python...
 FOLDER = os.path.join('NaiveBayes','Results')
-FILENAME = 'NB_Tf-Idf_results.txt'
+FILENAME = 'NB_Count_results.txt'
 FILEPATH = os.path.join(FOLDER,FILENAME)
 
 # data import and splitting
@@ -30,7 +30,7 @@ y_val = vl['school']
 
 
 # declare the "builder" of the Tf-Idf weighted term-document matrix
-vectorizer = TfidfVectorizer()
+vectorizer = CountVectorizer()
 # create the vocabulary and obtain the document-term matrix
 # for the training data...
 X_train = vectorizer.fit_transform(X_train)
@@ -60,7 +60,7 @@ for parameters in ParameterGrid(full_grid):
         for key, value in parameters.items():
             rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
             file.write(f'\t{key} = ' + rest)
-        file.write('\n')    
+        file.write('\n')
 
         macroPrec, macroRec, macroF1, _ = precision_recall_fscore_support(y_val, y_pred, zero_division=0.0, average='macro')
         file.write(f'Macroaverage precision = {macroPrec:<10.5f}\t') 
@@ -105,8 +105,8 @@ y_pred = model.predict(X_val)
 # show final score
 scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_val,
-                modelName='Naive Bayes (Tf-Idf)',
+                modelName='Naive Bayes (Tf)',
                 subtitle=f'alpha = {best_parameters['alpha']:.4f}, fit_prior = {best_parameters['fit_prior']}',
                 showConfusionMatrix=True,
                 saveFolder='NaiveBayes/Images',
-                saveName='NB_TF-Idf')
+                saveName='NB_Count')
