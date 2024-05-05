@@ -60,7 +60,8 @@ def make_wordcloud(bow:Dict[str,int],
 # Function that plots the two distributions (contrastive analysis)
 def plot_superimposed_distributions(bag_of_words1, 
                                     bag_of_words2,
-                                    **kwargs) -> matplotlib.figure.Figure:
+                                    ax=None,
+                                    **kwargs) -> matplotlib.axes.Axes:
     """Plot the superimposed distributions of two bags of words.
 
     Args:
@@ -76,7 +77,7 @@ def plot_superimposed_distributions(bag_of_words1,
             distribution2 (str): Name of the second distribution.
 
     Returns:
-        fig (matplotlib.figure.Figure): The created figure.
+        ax (matplotlib.axes.Axes): The created ax of the figure.
     """    
     
     RANGE = kwargs.get('range', kwargs.get('RANGE',0))
@@ -98,25 +99,26 @@ def plot_superimposed_distributions(bag_of_words1,
     freq2 = [bag_of_words2.get(word,0) for word in all_words]
 
     # Plot the two distributions
-    fig, ax = plt.subplots(figsize=(10, 12))
+    if ax is None:
+        _, ax = plt.subplots(figsize=(10, 8))
     ax.plot(range(len(all_words)), freq1, color=kwargs.get('color1','b'), alpha=0.5, label=kwargs.get('label1','Bag of Words 1'))
     ax.plot(range(len(all_words)), freq2, color=kwargs.get('color2','r'), alpha=0.5, label=kwargs.get('label2','Bag of Words 2'))
     
-    ax.set_xlabel('Words (ordinal number)')
-    ax.set_ylabel('Normalized frequency')
-    step = 10**int(np.log10(len(all_words)/10))
+    ax.set_xlabel('Words (ordinal number)', fontsize=12)
+    ax.set_ylabel('Normalized frequency', fontsize=12)
+    step = 10**round(np.log10(len(all_words)/10))
     ax.set_xticks(np.arange(0, len(all_words), step))
     ax.set_xticklabels(np.arange(0, len(all_words), step))
 
     # Create the title string if both distributions are provided
     distribution1 = kwargs.get("distribution1", "")
     distribution2 = kwargs.get("distribution2", "")
-    title_string = f' of {distribution1} and {distribution2}' if (distribution1 and distribution2) else ''
+    title_string = f'{distribution1.capitalize()} vs {distribution2}' if (distribution1 and distribution2) else 'Superimposed distributions'
 
-    ax.set_title('Superimposed distributions'+title_string, fontsize=14)
-    ax.legend()
+    ax.set_title(title_string, fontsize=20)
+    ax.legend(fontsize=16)
 
-    return fig   
+    return ax   
 
 def save_plot(plot, 
               filename:str,
