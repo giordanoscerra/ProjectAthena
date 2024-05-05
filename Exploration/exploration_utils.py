@@ -1,8 +1,12 @@
+import os
 from typing import List, Dict, Optional, Tuple
 
 from sklearn.feature_extraction.text import CountVectorizer
 import wordcloud 
-import os
+
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def create_bow(school:str, 
@@ -52,6 +56,67 @@ def make_wordcloud(bow:Dict[str,int],
                 min_font_size = 8).generate_from_frequencies(frequencies = bow)
     
     return cloud
+
+# Function that plots the two distributions (contrastive analysis)
+def plot_superimposed_distributions(bag_of_words1, 
+                                    bag_of_words2,
+                                    **kwargs) -> matplotlib.figure.Figure:
+    """Plot the superimposed distributions of two bags of words.
+
+    Args:
+        bag_of_words1 (dict): First bag of words.
+        bag_of_words2 (dict): Second bag of words.
+        **kwargs: Additional keyword arguments for customization.
+            range (int): Range for x-axis ticks.
+            color1 (str): Color for the first distribution plot.
+            color2 (str): Color for the second distribution plot.
+            label1 (str): Label for the first distribution plot.
+            label2 (str): Label for the second distribution plot.
+            distribution1 (str): Name of the first distribution.
+            distribution2 (str): Name of the second distribution.
+
+    Returns:
+        fig (matplotlib.figure.Figure): The created figure.
+    """    
+    
+    RANGE = kwargs.get('range', kwargs.get('RANGE',0))
+    # Combine the vocabularies of both bags of words
+    if RANGE:     
+        shared_support = {k for (_,k) in zip(range(RANGE),bag_of_words1.keys())}&{k for (_,k) in zip(range(RANGE),bag_of_words2.keys())}
+        exclusive_words1 = {k for (_,k) in zip(range(RANGE),bag_of_words1.keys())} - shared_support
+        exclusive_words2 = {k for (_,k) in zip(range(RANGE),bag_of_words2.keys())} - shared_support                         
+    else:
+        shared_support = set(bag_of_words1.keys()) & set(bag_of_words2.keys())
+        exclusive_words1 = set(bag_of_words1.keys()) - shared_support
+        exclusive_words2 = set(bag_of_words2.keys()) - shared_support
+
+    # isolate the exclusive words, and the shared part
+    all_words = list(exclusive_words1) + list(shared_support) + list(exclusive_words2)
+
+    # Get frequencies of each word in the "merged" bag of words
+    freq1 = [bag_of_words1.get(word,0) for word in all_words]
+    freq2 = [bag_of_words2.get(word,0) for word in all_words]
+
+    # Plot the two distributions
+    fig, ax = plt.subplots(figsize=(10, 12))
+    ax.plot(range(len(all_words)), freq1, color=kwargs.get('color1','b'), alpha=0.5, label=kwargs.get('label1','Bag of Words 1'))
+    ax.plot(range(len(all_words)), freq2, color=kwargs.get('color2','r'), alpha=0.5, label=kwargs.get('label2','Bag of Words 2'))
+    
+    ax.set_xlabel('Words (ordinal number)')
+    ax.set_ylabel('Normalized frequency')
+    step = 10**int(np.log10(len(all_words)/10))
+    ax.set_xticks(np.arange(0, len(all_words), step))
+    ax.set_xticklabels(np.arange(0, len(all_words), step))
+
+    # Create the title string if both distributions are provided
+    distribution1 = kwargs.get("distribution1", "")
+    distribution2 = kwargs.get("distribution2", "")
+    title_string = f' of {distribution1} and {distribution2}' if (distribution1 and distribution2) else ''
+
+    ax.set_title('Superimposed distributions'+title_string, fontsize=14)
+    ax.legend()
+
+    return fig   
 
 def save_plot(plot, 
               filename:str,
