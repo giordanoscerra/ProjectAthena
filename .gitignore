@@ -4,6 +4,7 @@ philosophy_data.csv
 /__pycache__
 *.h5
 
+*.code-workspace
 .DS_Store
 
 # .code-workspace files (used by Andrea)
