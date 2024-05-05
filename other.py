@@ -1,61 +1,57 @@
-from sklearn.model_selection import train_test_split
-import pandas as pd
+import os
 import numpy as np
 import tensorflow as tf
 from keras import layers
 import keras
 import matplotlib.pyplot as plt
 import tensorflow_hub as hub
-import re
+
+from scoring import *
 
 SCHOOLS = ['analytic','aristotle','german_idealism',
            'plato','continental','phenomenology',
            'rationalism','empiricism','feminism',
            'capitalism','communism','nietzsche',
            'stoicism']
-    
-def getData()->pd.DataFrame:
-    return pd.read_csv('philosophy_data.csv')
 
-def splitData(data:pd.DataFrame)->tuple:
-    return train_test_split(data['sentence_str'], data['school'], test_size=0.25, random_state=42)
 
 print("creating model")
-
-module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+module_url = "./archive/"
 embed = hub.KerasLayer(module_url)
-nn = keras.Sequential([
-    keras.Input(shape=(512,)),
-    layers.Dense(256, activation='relu'),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(13, activation='softmax')
-])
-#define the input as a string passed through the encoder
-def preprocess_input(input_string):
-  encoded_input = embed([input_string])
-  return encoded_input
+print(embed.get_config())
+embed.trainable = True
+print(embed.get_config())
 
-def preprocess_phrases(phrases):
-  encoded_phrases = []
-  for i, phrase in enumerate(phrases):
-    print(f'processed percentage {i/len(phrases)*100:.2f} %           ', end='\r ')
-    encoded_phrase = preprocess_input(phrase)
-    encoded_phrases.append(encoded_phrase)
-  print('processed percentage 100%        ')
-  return encoded_phrases
+class MyModel(keras.Model):
+    def __init__(self):
+        super(MyModel, self).__init__()
+        regularizer = keras.regularizers.l2(0.0000)
+        self.embedding_layer = embed
+        self.dense_layer1 = layers.Dense(256, activation='relu', kernel_regularizer=regularizer)
+        self.dense_layer2 = layers.Dense(128, activation='relu', kernel_regularizer=regularizer)
+        self.dense_layer3 = layers.Dense(64, activation='relu', kernel_regularizer=regularizer)
+        self.output_layer = layers.Dense(13, activation='softmax', kernel_regularizer=regularizer)
 
-nn.compile(loss=keras.losses.CategoricalCrossentropy(from_logits=True),
-        optimizer=keras.optimizers.Adam(1e-4),
-        metrics=['accuracy'])
+    def call(self, inputs):
+        x = self.embedding_layer(inputs)
+        x = self.dense_layer1(x)
+        x = self.dense_layer2(x)
+        x = self.dense_layer3(x)
+        return self.output_layer(x)
+
+nn = MyModel()
+
+print("compiling model")
+nn.compile(loss=keras.losses.CategoricalCrossentropy(),
+  optimizer=keras.optimizers.Adam(0.001),
+  metrics=['accuracy'],
+  )
 
 # Load the dataset
-x_train, x_test, y_train, y_test = splitData(getData())
-print("encoding training data")
-x_train = preprocess_phrases(x_train)
-print("encoding testing data")
-x_test = preprocess_phrases(x_test)
-print("encoding training labels")
+x_train, x_test, y_train, y_test = splitData(filterShortPhrases(getData(), numWords=0), test_size=0.30)
+#keep 20% of test
+x_test = x_test[:int(len(x_test)*0.66)]
+y_test = y_test[:int(len(y_test)*0.66)]
 #assign each school a number
 y_train = y_train.apply(lambda x: SCHOOLS.index(x))
 y_test = y_test.apply(lambda x: SCHOOLS.index(x))
@@ -68,10 +64,15 @@ x_train = np.array(x_train)
 x_test = np.array(x_test)
 y_train = np.array(y_train)
 y_test = np.array(y_test)
-x_train = x_train.reshape(x_train.shape[0], 512)
-x_test = x_test.reshape(x_test.shape[0], 512)
 print("fitting model")
-history = nn.fit(x_train, y_train, epochs=74, validation_data=(x_test, y_test), batch_size=64)
+
+history = nn.fit(x_train, y_train, 
+         validation_data=(x_test, y_test), 
+         epochs=74, 
+         batch_size=256,
+         verbose=1,
+         callbacks=[keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True)],
+        )
 
 print("plotting")
 plt.plot(history.history['accuracy'], label='accuracy')
@@ -89,3 +90,45 @@ plt.ylabel('Loss')
 plt.ylim([0, 3])
 plt.legend(loc='lower right')
 plt.show()
+
+
+print("parsing predictions")
+predictions = nn.predict(x_test)
+predictions = np.argmax(predictions, axis=1)
+predictions = [SCHOOLS[pred] for pred in predictions]
+y_test = np.argmax(y_test, axis=1)
+y_test = [SCHOOLS[pred] for pred in y_test]
+print("scoring")
+accuracy_per_lenght = {}
+tot_len = {}
+for i in range(2):
+    accuracy_per_lenght[i] = 0
+    tot_len[i] = 0
+for i in range(len(predictions)):
+    if(len(x_test[i].split()) < 20):
+        tot_len[0] += 1
+        if(predictions[i] == y_test[i]):
+            accuracy_per_lenght[0] += 1
+    elif(len(x_test[i].split()) < 40):
+        tot_len[1] += 1
+        if(predictions[i] == y_test[i]):
+            accuracy_per_lenght[1] += 1
+
+#now we have the accuracy per length
+for i in range(2):
+    if tot_len[i] > 0:
+        accuracy_per_lenght[i] /= tot_len[i]
+        print(f"Accuracy for length {i}: {accuracy_per_lenght[i]}")
+    else:
+        accuracy_per_lenght.pop(i)
+
+#plot the accuracy per length
+plt.plot(accuracy_per_lenght.keys(), accuracy_per_lenght.values())
+plt.xlabel('Length of sentence')
+plt.ylabel('Accuracy')
+plt.ylim([0, 1])
+plt.show()
+
+string = 'we should eat all the landlords'
+pred = nn.predict(np.array([string]))
+print(pred)
