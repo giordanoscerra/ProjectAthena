@@ -8,7 +8,8 @@ import gc
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from scoring import SCHOOLS  # Assuming SCHOOLS is a list of school names
-from utilities import getData
+from utilities import getData, Logger
+from datetime import datetime
 import numpy as np
 
 # Load data
@@ -22,6 +23,10 @@ labels_vl = vl['school']
 # BERT model path
 model_path = "../../../opt/models/bert-base-cased"
 
+# log path
+log_path = os.path.join(sys.path[0], 'log_', datetime.now().strftime("%Y%m%d%H%M%S"), '.txt')
+logger = Logger(log_path)
+
 # Device assignment
 device = torch.device("cuda" if torch.cuda.is_available()
                       else "mps" if torch.backends.mps.is_available()
@@ -34,6 +39,7 @@ if torch.cuda.is_available():
         print(f"GPU {i}: {torch.cuda.get_device_name(i)}")
 else:
     print("No GPUs available.")
+logger.add(f"Device: {device}")
 print('Device:', device)
 # Tokenize the data
 tokenizer = BertTokenizer.from_pretrained(model_path)
@@ -56,6 +62,7 @@ dataloader = DataLoader(dataset, batch_size=40, shuffle=True)
 # Loss function
 criterion = nn.CrossEntropyLoss()
 total_batches = len(dataloader)
+logger.add("Training. Time: " + datetime.now().strftime("H%M%S"))
 print('Training...')
 # Training loop
 num_epochs = 3
@@ -81,9 +88,12 @@ for epoch in range(num_epochs):
         torch.cuda.empty_cache()
     print()
 
+logger.add("Training finished at: " + datetime.now().strftime("H%M%S"))
+
 # Evaluation
 model.eval()
 # You can evaluate the model on the validation set here
+logger.add("Evaluation...")
 print('Evaluation...')
 tokenized_texts_vl = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts_vl]
 input_ids_vl = torch.tensor(tokenized_texts_vl)
@@ -105,5 +115,10 @@ for batch in dataloader_vl:
     del input_ids, labels, outputs, logits
     gc.collect()
     torch.cuda.empty_cache()
-print()
+logger.add("Evaluation finished at. Time: " + datetime.now().strftime("H%M%S"))
+logger.add(f'Validation accuracy: {total_accuracy/total_batches_vl:.2f}')
 print(f'Validation accuracy: {total_accuracy/total_batches_vl:.2f}')
+
+tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
+model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
+logger.save()

@@ -25,3 +25,16 @@ def getData(validation_size:float=0.2,
                                          random_state=42, 
                                          shuffle=True)
     return train, validation, test
+
+class Logger:
+    def __init__(self, log_path:str):
+        self.log_path = log_path
+        self.log = []
+    
+    def add(self, message:str):
+        self.log.append(message)
+    
+    def save(self):
+        with open(self.log_path, 'w') as f:
+            for message in self.log:
+                f.write(message + '\n')
