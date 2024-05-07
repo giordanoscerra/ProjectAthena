@@ -13,16 +13,16 @@ from utilities import getData, Logger
 from datetime import datetime
 import numpy as np
 
-def compute_epoch(model, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True):
+def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True):
     batchIndex = 0
     total_loss = 0
     total_accuracy = 0
     begin = time.time()
     for batch in dataloader:
         batchIndex += 1
-        input_ids, labels = batch
-        input_ids, labels = input_ids.to(device), labels.to(device)
-        outputs = model(input_ids, labels=labels)
+        input_ids, attention_mask, labels = batch
+        input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
+        outputs = model(input_ids, labels=labels, attention_mask=attention_mask)
         logits = outputs.logits
         loss = criterion(logits, labels)
         if backpropagate:    
@@ -40,7 +40,9 @@ def compute_epoch(model, dataloader, optimizer, criterion=nn.functional.cross_en
     return total_loss/batchIndex, total_accuracy/batchIndex
 
 # Load data
-tr, vl, _ = getData(min_chars=400, max_chars=500)
+tr, vl, _ = getData(min_chars=20, max_chars=1700)
+batchSize = 38
+num_epochs = 3
 print(len(tr), len(vl))
 texts = tr['sentence_str']
 labels = tr['school']
@@ -51,7 +53,7 @@ labels_vl = vl['school']
 model_path = "../../../opt/models/bert-base-cased"
 
 # log path
-log_path = os.path.join(sys.path[0], 'log_', datetime.now().strftime("%Y%m%d%H%M%S"), '.txt')
+log_path = os.path.join(sys.path[0], 'log_' + datetime.now().strftime("%Y%m%d%H%M%S") + '.txt')
 logger = Logger(log_path)
 
 # Device assignment
@@ -71,7 +73,7 @@ print('Device:', device)
 # Tokenize the data
 tokenizer = BertTokenizer.from_pretrained(model_path)
 tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts]
-
+attention_texts = [[float(i > 0) for i in text] for text in tokenized_texts]
 # Fine-tune BERT
 model = BertForSequenceClassification.from_pretrained(model_path, num_labels=len(SCHOOLS))
 optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
@@ -83,22 +85,24 @@ labels = torch.tensor([label_to_index[label] for label in labels], dtype=torch.l
 
 # Create TensorDataset and DataLoader
 input_ids = torch.tensor(tokenized_texts)
-dataset = TensorDataset(input_ids, labels)
-dataloader = DataLoader(dataset, batch_size=40, shuffle=True)
+attention_texts = torch.tensor(attention_texts)
+dataset = TensorDataset(input_ids, attention_texts, labels)
+dataloader = DataLoader(dataset, batch_size=batchSize, shuffle=True)
 
 # Loss function
 criterion = nn.CrossEntropyLoss()
 
 tokenized_texts_vl = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts_vl]
+attention_texts_vl = [[float(i > 0) for i in text] for text in tokenized_texts_vl]
 input_ids_vl = torch.tensor(tokenized_texts_vl)
+attention_texts_vl = torch.tensor(attention_texts_vl)
 labels_vl = torch.tensor([label_to_index[label] for label in labels_vl], dtype=torch.long)
-dataset_vl = TensorDataset(input_ids_vl, labels_vl)
-dataloader_vl = DataLoader(dataset_vl, batch_size=40, shuffle=True)
+dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
+dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
 start_time = datetime.now()
 logger.add("Training and Validation -> Start Time: " + start_time.strftime("H%M%S"))
 print('Training + Validation...')
 # Training AND Validation loop
-num_epochs = 3
 batchIndex = 0
 for epoch in range(num_epochs):
     model.train()
@@ -107,6 +111,8 @@ for epoch in range(num_epochs):
     val_loss, val_acc = compute_epoch(model, dataloader_vl, optimizer, criterion, backpropagate=False)
     logger.add(f'Epoch: {epoch}, TR Loss: {loss:.4f}, TR accuracy: {acc:.2f}')
     logger.add(f'Epoch: {epoch}, VL Loss: {val_loss:.4f}, VL accuracy: {val_acc:.2f}')
+    model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
+    tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
     print()
 
 end_time = datetime.now()

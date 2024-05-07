@@ -29,6 +29,8 @@ def getData(validation_size:float=0.2,
 class Logger:
     def __init__(self, log_path:str):
         self.log_path = log_path
+        with open(self.log_path, 'w') as f:
+            f.write('')
         self.log = []
     
     def add(self, message:str, save:bool=True):
@@ -37,7 +39,7 @@ class Logger:
             self.save()
     
     def save(self):
-        with open(self.log_path, 'wa') as f:
+        with open(self.log_path, 'a') as f:
             for message in self.log:
                 f.write(message + '\n')
         self.log = []
