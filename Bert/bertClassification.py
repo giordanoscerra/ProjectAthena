@@ -121,4 +121,3 @@ print(f'Validation accuracy: {total_accuracy/total_batches_vl:.2f}')
 
 tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
 model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
-logger.save()

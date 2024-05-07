@@ -31,8 +31,10 @@ class Logger:
         self.log_path = log_path
         self.log = []
     
-    def add(self, message:str):
+    def add(self, message:str, save:bool=True):
         self.log.append(message)
+        if save:
+            self.save()
     
     def save(self):
         with open(self.log_path, 'wa') as f:
