@@ -25,6 +25,21 @@ def getData(validation_size:float=0.2,
     test = reduceDataset(test, min_chars, max_chars)
     return train, validation, test
 
+
+class Logger:
+    def __init__(self, log_path:str):
+        self.log_path = log_path
+        self.log = []
+    
+    def add(self, message:str):
+        self.log.append(message)
+    
+    def save(self):
+        with open(self.log_path, 'wa') as f:
+            for message in self.log:
+                f.write(message + '\n')
+        self.log = []
+
 def reduceDataset(df:pd.DataFrame, 
                   min_chars:int=None, 
                   max_chars:int=None)-> pd.DataFrame:
@@ -34,5 +49,4 @@ def reduceDataset(df:pd.DataFrame,
         df = df[(df['sentence_length'] <= max_chars)]
     return df
 
-train, validation, test = getData(validation_size=0.2, test_size=0.1, from_folder='.', min_chars=10, max_chars=1000)
-print(train.shape, validation.shape, test.shape)
+
