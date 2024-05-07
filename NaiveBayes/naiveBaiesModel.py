@@ -4,6 +4,7 @@ import re
 from nltk.corpus import stopwords
 import os
 import sys
+import pickle
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy
 from utilities import *
@@ -59,6 +60,11 @@ if __name__ == '__main__':
     string = 'we should eat all the landlords'
     pred = model.predict(vectorizer.transform([string]))
     print(pred)
+    # Save the model
+    with open('NaiveBayes/naiveBayes.pkl', 'wb') as f:
+        pickle.dump(model, f)
+    with open('NaiveBayes/vectorizer.pkl', 'wb') as f:
+        pickle.dump(vectorizer, f)
     exit()
     cm = confusion_matrix(y_test, pred, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)

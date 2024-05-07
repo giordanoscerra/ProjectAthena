@@ -8,7 +8,7 @@ def getData(validation_size:float=0.2,
             test_size:float=0.1,
             from_folder:str='',
             min_chars:int=None, 
-            max_chars:int=None)-> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+            max_chars:int=None)-> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     df = pd.read_csv(os.path.join(from_folder,'philosophy_data.csv'))
     development, test = train_test_split(df, test_size=test_size, stratify=df['school'], random_state=42, shuffle=True)
     #split vslidation ant train from train
