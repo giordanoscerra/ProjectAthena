@@ -111,8 +111,8 @@ for epoch in range(num_epochs):
     val_loss, val_acc = compute_epoch(model, dataloader_vl, optimizer, criterion, backpropagate=False)
     logger.add(f'Epoch: {epoch}, TR Loss: {loss:.4f}, TR accuracy: {acc:.2f}')
     logger.add(f'Epoch: {epoch}, VL Loss: {val_loss:.4f}, VL accuracy: {val_acc:.2f}')
-    model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
-    tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
+    model.save_pretrained(os.path.join(sys.path[0], f'{epoch}_bert_model_' + datetime.now().strftime("%d%H%M")))
+    tokenizer.save_pretrained(os.path.join(sys.path[0], f'{epoch}_bert_tokenizer_' + datetime.now().strftime("%d%H%M")))
     print()
 
 end_time = datetime.now()
