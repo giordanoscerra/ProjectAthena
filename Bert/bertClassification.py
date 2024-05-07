@@ -5,12 +5,39 @@ from torch.utils.data import DataLoader, TensorDataset
 import os
 import sys
 import gc
+import time
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from scoring import SCHOOLS  # Assuming SCHOOLS is a list of school names
 from utilities import getData, Logger
 from datetime import datetime
 import numpy as np
+
+def compute_epoch(model, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True):
+    batchIndex = 0
+    total_loss = 0
+    total_accuracy = 0
+    begin = time.time()
+    for batch in dataloader:
+        batchIndex += 1
+        input_ids, labels = batch
+        input_ids, labels = input_ids.to(device), labels.to(device)
+        outputs = model(input_ids, labels=labels)
+        logits = outputs.logits
+        loss = criterion(logits, labels)
+        if backpropagate:    
+            loss.backward()
+            optimizer.step()
+        total_loss += loss.item()
+        optimizer.zero_grad()
+        total_accuracy += (logits.argmax(1) == labels).float().mean()
+        now = time.time()
+        eta = (now - begin) * (len(dataloader) - batchIndex) / batchIndex
+        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}, accuracy: {total_accuracy/batchIndex:.2f}     eta = {int(eta//60):03d}m {int(eta%60):02d}s      ', end='\r')
+        del input_ids, labels, outputs, logits, loss
+        gc.collect()
+        torch.cuda.empty_cache()
+    return total_loss/batchIndex, total_accuracy/batchIndex
 
 # Load data
 tr, vl, _ = getData(min_chars=400, max_chars=500)
@@ -61,63 +88,33 @@ dataloader = DataLoader(dataset, batch_size=40, shuffle=True)
 
 # Loss function
 criterion = nn.CrossEntropyLoss()
-total_batches = len(dataloader)
-logger.add("Training. Time: " + datetime.now().strftime("H%M%S"))
-print('Training...')
-# Training loop
+
+tokenized_texts_vl = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts_vl]
+input_ids_vl = torch.tensor(tokenized_texts_vl)
+labels_vl = torch.tensor([label_to_index[label] for label in labels_vl], dtype=torch.long)
+dataset_vl = TensorDataset(input_ids_vl, labels_vl)
+dataloader_vl = DataLoader(dataset_vl, batch_size=40, shuffle=True)
+start_time = datetime.now()
+logger.add("Training and Validation -> Start Time: " + start_time.strftime("H%M%S"))
+print('Training + Validation...')
+# Training AND Validation loop
 num_epochs = 3
 batchIndex = 0
 for epoch in range(num_epochs):
     model.train()
     batchIndex = 0
-    for batch in dataloader:
-        batchIndex += 1
-        input_ids, labels = batch
-        input_ids, labels = input_ids.to(device), labels.to(device)
-        
-        optimizer.zero_grad()
-        outputs = model(input_ids, labels=labels)
-        logits = outputs.logits
-        loss = criterion(logits, labels)
-        loss.backward()
-        optimizer.step()
-        accuracy = (logits.argmax(1) == labels).float().mean()
-        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}, accuracy: {accuracy:.2f}     completion: {(batchIndex/total_batches)*100:.1f}%      ', end='\r')
-        del input_ids, labels, outputs, logits, loss
-        gc.collect()
-        torch.cuda.empty_cache()
+    loss, acc = compute_epoch(model, dataloader, optimizer, criterion, backpropagate=True)
+    val_loss, val_acc = compute_epoch(model, dataloader_vl, optimizer, criterion, backpropagate=False)
+    logger.add(f'Epoch: {epoch}, TR Loss: {loss:.4f}, TR accuracy: {acc:.2f}')
+    logger.add(f'Epoch: {epoch}, VL Loss: {val_loss:.4f}, VL accuracy: {val_acc:.2f}')
     print()
 
-logger.add("Training finished at: " + datetime.now().strftime("H%M%S"))
-
-# Evaluation
-model.eval()
-# You can evaluate the model on the validation set here
-logger.add("Evaluation...")
-print('Evaluation...')
-tokenized_texts_vl = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts_vl]
-input_ids_vl = torch.tensor(tokenized_texts_vl)
-labels_vl = torch.tensor([label_to_index[label] for label in labels_vl], dtype=torch.long)
-dataset_vl = TensorDataset(input_ids_vl, labels_vl)
-dataloader_vl = DataLoader(dataset_vl, batch_size=2, shuffle=True)
-total_batches_vl = len(dataloader_vl)
-batchIndex = 0
-total_accuracy = 0
-for batch in dataloader_vl:
-    batchIndex += 1
-    input_ids, labels = batch
-    input_ids, labels = input_ids.to(device), labels.to(device)
-    outputs = model(input_ids, labels=labels)
-    logits = outputs.logits
-    accuracy = (logits.argmax(1) == labels).float().mean()
-    total_accuracy += accuracy
-    print(f'Accuracy: {accuracy:.2f}     completion: {(batchIndex/total_batches_vl)*100:.1f}%      ', end='\r')
-    del input_ids, labels, outputs, logits
-    gc.collect()
-    torch.cuda.empty_cache()
-logger.add("Evaluation finished at. Time: " + datetime.now().strftime("H%M%S"))
-logger.add(f'Validation accuracy: {total_accuracy/total_batches_vl:.2f}')
-print(f'Validation accuracy: {total_accuracy/total_batches_vl:.2f}')
-
+end_time = datetime.now()
 tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
 model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
+
+logger.add("Training and Validation -> End Time: " + end_time.strftime("H%M%S"))
+logger.add("Training and Validation -> Duration: " + str(end_time - start_time))
+
+
+
