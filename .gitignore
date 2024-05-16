@@ -7,6 +7,8 @@ philosophy_data.csv
 *.code-workspace
 .DS_Store
 
+SimpleEnglishWikipedia/
+
 # .code-workspace files (used by Andrea)
 *.code-workspace
 
