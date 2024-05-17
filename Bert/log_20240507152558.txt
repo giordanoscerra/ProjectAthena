@@ -1,0 +1,10 @@
+Device: cuda
+Training and Validation -> Start Time: H2855
+Epoch: 0, TR Loss: 0.7762, TR accuracy: 0.75
+Epoch: 0, VL Loss: 0.5739, VL accuracy: 0.82
+Epoch: 1, TR Loss: 0.4139, TR accuracy: 0.87
+Epoch: 1, VL Loss: 0.5385, VL accuracy: 0.83
+Epoch: 2, TR Loss: 0.2568, TR accuracy: 0.92
+Epoch: 2, VL Loss: 0.5432, VL accuracy: 0.84
+Training and Validation -> End Time: H3411
+Training and Validation -> Duration: 15:05:15.967245
