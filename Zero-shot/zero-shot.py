@@ -19,15 +19,16 @@ min_chars = 84
 _, vl, _ = getData(min_chars=min_chars)
 texts_vl = vl['sentence_str'].tolist()
 labels_vl = vl['school'].tolist()
-texts_vl_subsets = np.array_split(texts_vl, 10)
-labels_vl_subsets = np.array_split(labels_vl, 10)
+#texts_vl_subsets = np.array_split(texts_vl, 10)
+#labels_vl_subsets = np.array_split(labels_vl, 10)
 
 # Model name and path
-model_name = 'deberta-v3-small-tasksource-nli'
+#model_name = 'deberta-v3-small-tasksource-nli'
 #model_name = 'bart-large-mnli'
-model_path = '../' + model_name
-classifier = pipeline("zero-shot-classification", model='sileod/deberta-v3-small-tasksource-nli', device=device)
+#model_path = '../' + model_name
+classifier = pipeline("zero-shot-classification", model='facebook/bart-large-mnli', device=device)
 
+"""
 # Initialize an empty list to store the predictions
 predictions = []
 
@@ -35,6 +36,9 @@ predictions = []
 for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
     if len(subset) > 0:
         predictions.extend(classifier(subset.tolist(), SCHOOLS))
+"""
+
+predictions = classifier(texts_vl, SCHOOLS)
 
 # Get the predicted labels
 predicted_labels = [pred['labels'][0] for pred in predictions]
