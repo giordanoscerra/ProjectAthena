@@ -60,9 +60,6 @@ def compute_epoch(model:DistilBertForSequenceClassification, dataloader, optimiz
     for batch in dataloader:
         batchIndex += 1
         input_ids, attention_mask, labels = batch
-        print(input_ids.shape, attention_mask.shape, labels.shape)
-        print(batch)
-        exit()
         if device is not None:
             input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
         
