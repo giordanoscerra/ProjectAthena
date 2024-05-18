@@ -5,7 +5,6 @@ import sys
 import time
 import torch
 import torch.nn as nn
-import pandas as pd
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
 from torch.utils.data import DataLoader, TensorDataset
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
@@ -53,6 +52,7 @@ device = torch.device("cuda" if torch.cuda.is_available()
                       else "mps" if torch.backends.mps.is_available()
                       else "cpu")
 print('device is:',device)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 model.to(device)
 
 def compute_epoch(model:DistilBertForSequenceClassification, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True, epoch=0, device=None) -> tuple[float, float]:
@@ -83,8 +83,6 @@ def compute_epoch(model:DistilBertForSequenceClassification, dataloader, optimiz
         torch.cuda.empty_cache()
     return total_loss/batchIndex, total_accuracy/batchIndex
 
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
 start_time = datetime.now()
 print('Training and Validation -> Start Time:', start_time.strftime("H%M%S"))
 log_path = os.path.join(sys.path[0], 'log_' + datetime.now().strftime("%Y%m%d%H%M%S") + '.txt')
@@ -92,7 +90,7 @@ logger = Logger(log_path)
 logger.add("Training and Validation -> Start Time: " + start_time.strftime("H%M%S"))
 
 for epoch in range(num_epochs):
-    print(f'Epoch {epoch+1}/{num_epochs}')
+    print(f'\nEpoch {epoch+1}/{num_epochs}')
     logger.add(f'Epoch {epoch+1}/{num_epochs}')
     model.train()
     loss,acc = compute_epoch(model, dataloader_tr, optimizer, epoch=epoch, device=device)
@@ -100,3 +98,13 @@ for epoch in range(num_epochs):
     model.eval()
     loss,acc = compute_epoch(model, dataloader_vl, optimizer, backpropagate=False, epoch=epoch, device=device)
     logger.add(f'Epoch: {epoch}, VL Loss: {loss:.4f}, VL accuracy: {acc:.2f}')
+    model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{epoch}'))
+    tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{epoch}'))
+
+end_time = datetime.now()
+print('\nTraining and Validation -> End Time:', end_time.strftime("H%M%S"))
+logger.add("Training and Validation -> End Time: " + end_time.strftime("H%M%S"))
+logger.add("Duration: " + str(end_time - start_time))
+
+#model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{datetime.now().strftime("%d%H%M")}'))
+#tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{datetime.now().strftime("%d%H%M")}'))
