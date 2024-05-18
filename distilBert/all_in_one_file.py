@@ -12,7 +12,7 @@ from scoring import SCHOOLS
 from utilities import Logger, getData
 
 # Load data
-tr, vl, _ = getData(min_chars=200, max_chars=1700)
+tr, vl, _ = getData(min_chars=300, max_chars=1700)
 batchSize = 30
 num_epochs = 3
 learning_rate = 2e-5
@@ -74,10 +74,11 @@ def compute_epoch(model:DistilBertForSequenceClassification, dataloader, optimiz
             optimizer.step()
         total_loss += loss.item()
         optimizer.zero_grad()
-        total_accuracy += (logits.argmax(1) == labels).float().mean()
+        batch_accuracy = (logits.argmax(1) == labels).float().mean()
+        total_accuracy += batch_accuracy
         now = time.time()
         eta = (now - begin) * (len(dataloader) - batchIndex) / batchIndex
-        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}, accuracy: {total_accuracy/batchIndex:.2f}     eta = {int(eta//60):03d}m {int(eta%60):02d}s      ', end='\r')
+        print(f'Epoch: {epoch}, Loss: {loss.item():.4f}, accuracy: {batch_accuracy:.2f}     eta = {int(eta//60):03d}m {int(eta%60):02d}s      ', end='\r')
         del input_ids, labels, outputs, logits, loss
         gc.collect()
         torch.cuda.empty_cache()
