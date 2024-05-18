@@ -11,9 +11,9 @@ from scoring import scorePhilosophy, SCHOOLS  # Assuming SCHOOLS is a list of sc
 from utilities import getData
 
 # Load data
-_, vl, _ = getData(min_chars=20, max_chars=1700)
-texts_vl = vl['sentence_str'].tolist()[:10]
-labels_vl = vl['school'].tolist()[:10]
+_, vl, _ = getData(min_chars=84)
+texts_vl = vl['sentence_str'].tolist()
+labels_vl = vl['school'].tolist()
 texts_vl_subsets = np.array_split(texts_vl, 10)
 labels_vl_subsets = np.array_split(labels_vl, 10)
 
