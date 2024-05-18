@@ -53,14 +53,14 @@ with open('Zero-shot/results.json', 'w') as f:
     # Convert the dictionary to a JSON string
     json.dump(results, f, indent=4)
 
-# Plot the confusion matrix
-scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot', saveName='zero-shot')
-
 # Save predictions in an indented JSON file
 with open('Zero-shot/predictions.json', 'w') as f:
     
     # Convert the predictions list to a JSON string with indentation
     json.dump(predictions, f, indent=4)
+
+# Plot the confusion matrix
+scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot', saveName='zero-shot')
 
 #{'labels': ['travel', 'dancing', 'cooking'],
 # 'scores': [0.9938651323318481, 0.0032737774308770895, 0.002861034357920289],
