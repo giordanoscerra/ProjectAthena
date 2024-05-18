@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import torch
 import numpy as np
 from tqdm import tqdm
 from transformers import pipeline
@@ -10,8 +11,12 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy, SCHOOLS  # Assuming SCHOOLS is a list of school names
 from utilities import getData
 
+# Check if CUDA is available
+device = 1 if torch.cuda.is_available() else -1  # set device to 1 to use the second GPU, -1 for CPU
+
 # Load data
-_, vl, _ = getData(min_chars=84)
+min_chars = 84
+_, vl, _ = getData(min_chars=min_chars)
 texts_vl = vl['sentence_str'].tolist()
 labels_vl = vl['school'].tolist()
 texts_vl_subsets = np.array_split(texts_vl, 10)
@@ -21,7 +26,7 @@ labels_vl_subsets = np.array_split(labels_vl, 10)
 model_name = 'deberta-v3-small-tasksource-nli'
 #model_name = 'bart-large-mnli'
 model_path = '../' + model_name
-classifier = pipeline("zero-shot-classification", model=model_path)
+classifier = pipeline("zero-shot-classification", model='sileod/deberta-v3-small-tasksource-nli', device=device)
 
 # Initialize an empty list to store the predictions
 predictions = []
@@ -36,6 +41,9 @@ predicted_labels = [pred['labels'][0] for pred in predictions]
 
 # Create a dictionary with the report, accuracy, and confusion matrix
 results = {
+
+    # Minimum number of characters per sentence
+    'min_chars': min_chars,
 
     # Calculate accuracy
     'accuracy': accuracy_score(labels_vl, predicted_labels),
