@@ -12,8 +12,8 @@ from utilities import getData
 
 # Load data
 _, vl, _ = getData(min_chars=20, max_chars=1700)
-texts_vl = vl['sentence_str'].tolist()[:15]
-labels_vl = vl['school'].tolist()[:15]
+texts_vl = vl['sentence_str'].tolist()[:10]
+labels_vl = vl['school'].tolist()[:10]
 texts_vl_subsets = np.array_split(texts_vl, 10)
 labels_vl_subsets = np.array_split(labels_vl, 10)
 
@@ -31,27 +31,8 @@ for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
     if len(subset) > 0:
         predictions.extend(classifier(subset.tolist(), SCHOOLS))
 
-print(predictions)
-print(len(predictions))
-#print(predictions[0])
-#print([pred['labels'][np.argmax(pred['scores'])] for pred in predictions])
-print('-----------------------------------')
-preds = classifier(texts_vl, SCHOOLS)
-print(preds)
-print(len(preds))
-#print(preds[0])
-#print([pred['labels'][np.argmax(pred['scores'])] for pred in preds])
-
-# Check if predictions and preds contain the same things
-if predictions == preds:
-    print("predictions and preds contain the same things")
-else:
-    print("predictions and preds do not contain the same things")
-
-
-exit()
 # Get the predicted labels
-predicted_labels = [pred['labels'][np.argmax(pred['scores'])] for pred in predictions]
+predicted_labels = [pred['labels'][0] for pred in predictions]
 
 # Create a dictionary with the report, accuracy, and confusion matrix
 results = {
@@ -74,6 +55,12 @@ with open('Zero-shot/results.json', 'w') as f:
 
 # Plot the confusion matrix
 scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot', saveName='zero-shot')
+
+# Save predictions in an indented JSON file
+with open('Zero-shot/predictions.json', 'w') as f:
+    
+    # Convert the predictions list to a JSON string with indentation
+    json.dump(predictions, f, indent=4)
 
 #{'labels': ['travel', 'dancing', 'cooking'],
 # 'scores': [0.9938651323318481, 0.0032737774308770895, 0.002861034357920289],
