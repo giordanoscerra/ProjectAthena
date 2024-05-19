@@ -30,7 +30,7 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     
     ############################################
-    ######### Beging of the main code  #########
+    ######### Begin of the main code  ##########
     ############################################
 
     tr, vl, _ = getData()
