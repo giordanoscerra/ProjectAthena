@@ -1,0 +1,139 @@
+Naive Bayes on the tfidf weighted term-document matrix
+Scores for different values of the smoothing parameter
+
+Ran on 2024-05-19 18:39:19.972589
+
+	alpha = 1.000000  		fit_prior = True	
+Macroaverage precision = 0.75159   	Macroaverage recall = 0.57279   	Macroaverage F1 = 0.60246   
+Macroaverage precision = 0.75792   	Macroaverage recall = 0.70220   	Macroaverage F1 = 0.68635   
+Microaverage precision = microaverage recall = microaverage F1 = 0.70220   
+
+	alpha = 1.000000  		fit_prior = False	
+Macroaverage precision = 0.80652   	Macroaverage recall = 0.66509   	Macroaverage F1 = 0.68975   
+Macroaverage precision = 0.78379   	Macroaverage recall = 0.76655   	Macroaverage F1 = 0.75913   
+Microaverage precision = microaverage recall = microaverage F1 = 0.76655   
+
+	alpha = 0.359381  		fit_prior = True	
+Macroaverage precision = 0.83908   	Macroaverage recall = 0.67527   	Macroaverage F1 = 0.70192   
+Macroaverage precision = 0.79658   	Macroaverage recall = 0.77725   	Macroaverage F1 = 0.77037   
+Microaverage precision = microaverage recall = microaverage F1 = 0.77725   
+
+	alpha = 0.359381  		fit_prior = False	
+Macroaverage precision = 0.81580   	Macroaverage recall = 0.74149   	Macroaverage F1 = 0.75901   
+Macroaverage precision = 0.81017   	Macroaverage recall = 0.80592   	Macroaverage F1 = 0.80403   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80592   
+
+	alpha = 0.129155  		fit_prior = True	
+Macroaverage precision = 0.84214   	Macroaverage recall = 0.73317   	Macroaverage F1 = 0.75995   
+Macroaverage precision = 0.81342   	Macroaverage recall = 0.80580   	Macroaverage F1 = 0.80308   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80580   
+
+	alpha = 0.129155  		fit_prior = False	
+Macroaverage precision = 0.80554   	Macroaverage recall = 0.78171   	Macroaverage F1 = 0.78780   
+Macroaverage precision = 0.81724   	Macroaverage recall = 0.81367   	Macroaverage F1 = 0.81390   
+Microaverage precision = microaverage recall = microaverage F1 = 0.81367   
+
+	alpha = 0.046416  		fit_prior = True	
+Macroaverage precision = 0.83774   	Macroaverage recall = 0.75871   	Macroaverage F1 = 0.78345   
+Macroaverage precision = 0.81662   	Macroaverage recall = 0.81268   	Macroaverage F1 = 0.81119   
+Microaverage precision = microaverage recall = microaverage F1 = 0.81268   
+
+	alpha = 0.046416  		fit_prior = False	
+Macroaverage precision = 0.79135   	Macroaverage recall = 0.80364   	Macroaverage F1 = 0.79608   
+Macroaverage precision = 0.81838   	Macroaverage recall = 0.81373   	Macroaverage F1 = 0.81468   
+Microaverage precision = microaverage recall = microaverage F1 = 0.81373   
+
+	alpha = 0.016681  		fit_prior = True	
+Macroaverage precision = 0.83206   	Macroaverage recall = 0.76848   	Macroaverage F1 = 0.79108   
+Macroaverage precision = 0.81577   	Macroaverage recall = 0.81303   	Macroaverage F1 = 0.81194   
+Microaverage precision = microaverage recall = microaverage F1 = 0.81303   
+
+	alpha = 0.016681  		fit_prior = False	
+Macroaverage precision = 0.77978   	Macroaverage recall = 0.80767   	Macroaverage F1 = 0.79161   
+Macroaverage precision = 0.81612   	Macroaverage recall = 0.81092   	Macroaverage F1 = 0.81206   
+Microaverage precision = microaverage recall = microaverage F1 = 0.81092   
+
+	alpha = 0.005995  		fit_prior = True	
+Macroaverage precision = 0.82728   	Macroaverage recall = 0.76746   	Macroaverage F1 = 0.78925   
+Macroaverage precision = 0.81120   	Macroaverage recall = 0.80883   	Macroaverage F1 = 0.80779   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80883   
+
+	alpha = 0.005995  		fit_prior = False	
+Macroaverage precision = 0.77615   	Macroaverage recall = 0.80393   	Macroaverage F1 = 0.78803   
+Macroaverage precision = 0.81234   	Macroaverage recall = 0.80748   	Macroaverage F1 = 0.80859   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80748   
+
+	alpha = 0.002154  		fit_prior = True	
+Macroaverage precision = 0.82102   	Macroaverage recall = 0.76183   	Macroaverage F1 = 0.78337   
+Macroaverage precision = 0.80648   	Macroaverage recall = 0.80432   	Macroaverage F1 = 0.80316   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80432   
+
+	alpha = 0.002154  		fit_prior = False	
+Macroaverage precision = 0.77259   	Macroaverage recall = 0.79635   	Macroaverage F1 = 0.78290   
+Macroaverage precision = 0.80687   	Macroaverage recall = 0.80235   	Macroaverage F1 = 0.80341   
+Microaverage precision = microaverage recall = microaverage F1 = 0.80235   
+
+	alpha = 0.000774  		fit_prior = True	
+Macroaverage precision = 0.81658   	Macroaverage recall = 0.75581   	Macroaverage F1 = 0.77750   
+Macroaverage precision = 0.80192   	Macroaverage recall = 0.79977   	Macroaverage F1 = 0.79854   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79977   
+
+	alpha = 0.000774  		fit_prior = False	
+Macroaverage precision = 0.77124   	Macroaverage recall = 0.78920   	Macroaverage F1 = 0.77907   
+Macroaverage precision = 0.80225   	Macroaverage recall = 0.79815   	Macroaverage F1 = 0.79912   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79815   
+
+	alpha = 0.000278  		fit_prior = True	
+Macroaverage precision = 0.81246   	Macroaverage recall = 0.75060   	Macroaverage F1 = 0.77235   
+Macroaverage precision = 0.79776   	Macroaverage recall = 0.79559   	Macroaverage F1 = 0.79431   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79559   
+
+	alpha = 0.000278  		fit_prior = False	
+Macroaverage precision = 0.76948   	Macroaverage recall = 0.78209   	Macroaverage F1 = 0.77481   
+Macroaverage precision = 0.79787   	Macroaverage recall = 0.79401   	Macroaverage F1 = 0.79494   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79401   
+
+	alpha = 0.000100  		fit_prior = True	
+Macroaverage precision = 0.80772   	Macroaverage recall = 0.74550   	Macroaverage F1 = 0.76717   
+Macroaverage precision = 0.79363   	Macroaverage recall = 0.79147   	Macroaverage F1 = 0.79015   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79147   
+
+	alpha = 0.000100  		fit_prior = False	
+Macroaverage precision = 0.76648   	Macroaverage recall = 0.77597   	Macroaverage F1 = 0.77024   
+Macroaverage precision = 0.79421   	Macroaverage recall = 0.79042   	Macroaverage F1 = 0.79134   
+Microaverage precision = microaverage recall = microaverage F1 = 0.79042   
+
+	alpha = 0.000000  		fit_prior = True	
+Macroaverage precision = 0.76728   	Macroaverage recall = 0.62265   	Macroaverage F1 = 0.66314   
+Macroaverage precision = 0.73568   	Macroaverage recall = 0.69597   	Macroaverage F1 = 0.69932   
+Microaverage precision = microaverage recall = microaverage F1 = 0.69597   
+
+	alpha = 0.000000  		fit_prior = False	
+Macroaverage precision = 0.71050   	Macroaverage recall = 0.63783   	Macroaverage F1 = 0.66344   
+Macroaverage precision = 0.72524   	Macroaverage recall = 0.69353   	Macroaverage F1 = 0.69897   
+Microaverage precision = microaverage recall = microaverage F1 = 0.69353   
+
+
+
+		Best parameters found:
+	alpha = 0.046416  		fit_prior = False	
+F1 score on the validation set = 0.8137
+                 precision    recall  f1-score   support
+
+       analytic       0.87      0.83      0.85      6841
+      aristotle       0.86      0.78      0.82      7386
+german_idealism       0.85      0.91      0.88      3106
+          plato       0.83      0.83      0.83      2593
+    continental       0.86      0.78      0.82      5190
+  phenomenology       0.75      0.85      0.80      3105
+    rationalism       0.76      0.81      0.79      2702
+     empiricism       0.87      0.84      0.86      6668
+       feminism       0.66      0.76      0.70      1447
+     capitalism       0.82      0.79      0.81      4049
+      communism       0.70      0.81      0.75      4322
+      nietzsche       0.74      0.80      0.77      3464
+       stoicism       0.70      0.66      0.68       333
+
+       accuracy                           0.81     51206
+      macro avg       0.79      0.80      0.80     51206
+   weighted avg       0.82      0.81      0.81     51206
