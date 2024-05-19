@@ -33,12 +33,14 @@ def scorePhilosophy(prediction: List[str],
         plt.savefig(fig_path, dpi=300)
     if showConfusionMatrix:
         plt.show()
-    #classificaiton report
-    print(classification_report(ground_truth, 
-                                prediction, 
-                                target_names=SCHOOLS,
-                                #labels=list(range(1,14))
-                                ))
+    
+    report = classification_report(ground_truth, 
+                                   prediction, 
+                                   target_names=SCHOOLS,
+                                   #labels=list(range(1,14))
+                                   )
+    print(report)
+    return report
 
 def getData()->pd.DataFrame:
     return pd.read_csv('philosophy_data.csv')

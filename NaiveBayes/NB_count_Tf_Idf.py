@@ -20,11 +20,11 @@ method = 'tfidf'  # 'count' or 'tfidf'
 # Pathing is a nightmare in python...
 FOLDER = os.path.join('NaiveBayes','Results')
 
-if method is 'count':
+if method == 'count':
     FILENAME = 'NB_Count_results.txt'
     FILEPATH = os.path.join(FOLDER,FILENAME)
     vectorizer = CountVectorizer()
-elif method is 'tfidf':
+elif method == 'tfidf':
     FILENAME = 'NB_Tf-Idf_results.txt'
     FILEPATH = os.path.join(FOLDER,FILENAME)
     vectorizer = TfidfVectorizer()
@@ -109,10 +109,13 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_val)
 
 # show final score
-scorePhilosophy(prediction=y_pred, 
+report = scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_val,
                 modelName='Naive Bayes ('+method+')',
-                subtitle=f'alpha = {best_parameters['alpha']:.4f}, fit_prior = {best_parameters['fit_prior']}',
+                subtitle=f'alpha = {best_parameters["alpha"]:.4f}, fit_prior = {best_parameters["fit_prior"]}',
                 showConfusionMatrix=True,
                 saveFolder='NaiveBayes/Images',
                 saveName='NB_'+method)
+
+with open(FILEPATH, 'a') as file:
+    file.write(report)
