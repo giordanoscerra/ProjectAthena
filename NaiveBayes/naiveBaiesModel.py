@@ -7,6 +7,7 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy
 from utilities import *
+from scoring import SCHOOLS  # Assuming SCHOOLS is a list of school names
 
 def getStopWords()->list:
     return stopwords.words('english')
@@ -25,21 +26,26 @@ def addNegationsToData(data:pd.DataFrame)->pd.DataFrame:
 
 if __name__ == '__main__':
     from sklearn.model_selection import train_test_split
-    from sklearn.feature_extraction.text import CountVectorizer
+    from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
     from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
     
     ############################################
     ######### Begin of the main code  ##########
     ############################################
-
-    tr, vl, _ = getData()
+    min_chars = 84
+    # we decided that this only excludes one sentence, so it's ok to avoid to use it
+    #max_chars = 1700
+    tr, vl, ts = getData(min_chars=min_chars)
 
     x_train = tr['sentence_str']
     y_train = tr['school']
     x_val = vl['sentence_str']
     y_val = vl['school']
-    #vectorizer = CountVectorizer(analyzer='word', stop_words=getStopWords())
+    x_test = ts['sentence_str']
+    y_test = ts['school']
+    # vectorizer = CountVectorizer(analyzer='word', stop_words=getStopWords())
+    # vectorizer = TfidfVectorizer()
     vectorizer = CountVectorizer()
     x_train = vectorizer.fit_transform(x_train)
     x_val = vectorizer.transform(x_val)
@@ -55,8 +61,8 @@ if __name__ == '__main__':
     ############################################
     
 
-    scorePhilosophy(pred, y_val, showConfusionMatrix=False, saveName='bestNaive.png')
-    string = 'we should eat all the landlords'
+    scorePhilosophy(pred, y_val, showConfusionMatrix=True, saveName='bestNaive.png')
+    string = 'ideas are the most important thing in the world'
     pred = model.predict(vectorizer.transform([string]))
     print(pred)
     exit()
