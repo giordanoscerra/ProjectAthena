@@ -11,8 +11,23 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy, SCHOOLS  # Assuming SCHOOLS is a list of school names
 from utilities import getData
 
+renamed_schools = ['Analytic Philosophy',
+                   'Aristotelian Philosophy',
+                   'German Idealism Philosophy',
+                   'Platonic Philosophy',
+                    'Continental Philosophy',
+                    'Phenomenological Philosophy',
+                    'Rationalist Philosophy',
+                    'Empiricist Philosophy',
+                    'Feminist Philosophy',
+                    'Capitalist Philosophy',
+                    'Communist Philosophy',
+                    'Nietzschean Philosophy',
+                    'Stoic Philosophy'
+                    ]
+
 # Check if CUDA is available
-device = 1 if torch.cuda.is_available() else -1  # set device to 1 to use the second GPU, -1 for CPU
+device = 'cuda:1' if torch.cuda.is_available() else -1  # set device to first GPU, -1 for CPU
 
 # Load data
 min_chars = 84
@@ -38,7 +53,15 @@ for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
         predictions.extend(classifier(subset.tolist(), SCHOOLS))
 """
 
-predictions = classifier(texts_vl, SCHOOLS)
+predictions = classifier(texts_vl, renamed_schools)
+
+# Save predictions in an indented JSON file
+with open('Zero-shot/predictions.json', 'w') as f:
+    
+    # Convert the predictions list to a JSON string with indentation
+    json.dump(predictions, f, indent=4)
+
+exit()
 
 # Get the predicted labels
 predicted_labels = [pred['labels'][0] for pred in predictions]
@@ -64,12 +87,6 @@ with open('Zero-shot/results.json', 'w') as f:
 
     # Convert the dictionary to a JSON string
     json.dump(results, f, indent=4)
-
-# Save predictions in an indented JSON file
-with open('Zero-shot/predictions.json', 'w') as f:
-    
-    # Convert the predictions list to a JSON string with indentation
-    json.dump(predictions, f, indent=4)
 
 # Plot the confusion matrix
 scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot', saveName='zero-shot')
