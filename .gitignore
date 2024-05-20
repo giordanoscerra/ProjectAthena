@@ -10,6 +10,9 @@ philosophy_data.csv
 # .code-workspace files (used by Andrea)
 *.code-workspace
 
+# Wikipedia
+SimpleEnglishWikipedia/
+
 glove.42B.300d.txt
 
 # Byte-compiled / optimized / DLL files
