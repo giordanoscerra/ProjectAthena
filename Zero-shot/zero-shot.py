@@ -61,8 +61,6 @@ with open('Zero-shot/predictions.json', 'w') as f:
     # Convert the predictions list to a JSON string with indentation
     json.dump(predictions, f, indent=4)
 
-exit()
-
 # Get the predicted labels
 predicted_labels = [pred['labels'][0] for pred in predictions]
 
