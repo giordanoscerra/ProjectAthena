@@ -7,30 +7,36 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from datetime import datetime
 
 from sklearn.naive_bayes import MultinomialNB 
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import ParameterGrid
 
 from sklearn.metrics import precision_recall_fscore_support, f1_score
 from scoring import scorePhilosophy
 from utilities import getData
 
+method = 'tfidf'  # 'count' or 'tfidf'
+
 # file, folder, path... Where to record our numbers
 # Pathing is a nightmare in python...
 FOLDER = os.path.join('NaiveBayes','Results')
-FILENAME = 'NB_Tf-Idf_results.txt'
-FILEPATH = os.path.join(FOLDER,FILENAME)
+
+if method == 'count':
+    FILENAME = 'NB_Count_results.txt'
+    FILEPATH = os.path.join(FOLDER,FILENAME)
+    vectorizer = CountVectorizer()
+elif method == 'tfidf':
+    FILENAME = 'NB_Tf-Idf_results.txt'
+    FILEPATH = os.path.join(FOLDER,FILENAME)
+    vectorizer = TfidfVectorizer()
 
 # data import and splitting
-tr, vl, _ = getData()
+tr, vl, _ = getData(min_chars=84)
 X_train = tr['sentence_str']
 y_train = tr['school']
 
 X_val = vl['sentence_str']
 y_val = vl['school']
 
-
-# declare the "builder" of the Tf-Idf weighted term-document matrix
-vectorizer = TfidfVectorizer()
 # create the vocabulary and obtain the document-term matrix
 # for the training data...
 X_train = vectorizer.fit_transform(X_train)
@@ -39,7 +45,7 @@ X_val = vectorizer.transform(X_val)
 
 
 with open(FILEPATH, 'w') as file:
-    file.write('Naive Bayes on the Tf-Idf weighted term-document matrix\n')
+    file.write('Naive Bayes on the '+ method +' weighted term-document matrix\n')
     file.write('Scores for different values of the smoothing parameter\n\n')
     file.write(f'Ran on {datetime.now()}\n\n')
 
@@ -60,7 +66,7 @@ for parameters in ParameterGrid(full_grid):
         for key, value in parameters.items():
             rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
             file.write(f'\t{key} = ' + rest)
-        file.write('\n')    
+        file.write('\n')
 
         macroPrec, macroRec, macroF1, _ = precision_recall_fscore_support(y_val, y_pred, zero_division=0.0, average='macro')
         file.write(f'Macroaverage precision = {macroPrec:<10.5f}\t') 
@@ -103,10 +109,13 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_val)
 
 # show final score
-scorePhilosophy(prediction=y_pred, 
+report = scorePhilosophy(prediction=y_pred, 
                 ground_truth=y_val,
-                modelName='Naive Bayes (Tf-Idf)',
-                subtitle=f'alpha = {best_parameters['alpha']:.4f}, fit_prior = {best_parameters['fit_prior']}',
+                modelName='Naive Bayes ('+method+')',
+                subtitle=f'alpha = {best_parameters["alpha"]:.4f}, fit_prior = {best_parameters["fit_prior"]}',
                 showConfusionMatrix=True,
                 saveFolder='NaiveBayes/Images',
-                saveName='NB_TF-Idf')
+                saveName='NB_'+method)
+
+with open(FILEPATH, 'a') as file:
+    file.write(report)
