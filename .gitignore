@@ -4,8 +4,10 @@ philosophy_data.csv
 /__pycache__
 *.h5
 
-*.code-workspace
 .DS_Store
+
+# Ignore the simple english wikipedia dataset
+SimpleEnglishWikipedia/
 
 # .code-workspace files (used by Andrea)
 *.code-workspace

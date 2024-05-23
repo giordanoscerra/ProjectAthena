@@ -1,7 +1,7 @@
 Naive Bayes on the Tf-Idf weighted term-document matrix
 Scores for different values of the smoothing parameter
 
-Ran on 2024-05-02 22:43:18.962628
+Ran on 2024-05-19 14:37:22.977373
 
 	alpha = 1.000000  		fit_prior = True	
 Macroaverage precision = 0.76305   	Macroaverage recall = 0.68436   	Macroaverage F1 = 0.70224   
@@ -104,14 +104,14 @@ Macroaverage precision = 0.75766   	Macroaverage recall = 0.75293   	Macroaverag
 Microaverage precision = microaverage recall = microaverage F1 = 0.75293   
 
 	alpha = 0.000000  		fit_prior = True	
-Macroaverage precision = 0.71159   	Macroaverage recall = 0.63777   	Macroaverage F1 = 0.66553   
-Macroaverage precision = 0.70130   	Macroaverage recall = 0.68421   	Macroaverage F1 = 0.68574   
-Microaverage precision = microaverage recall = microaverage F1 = 0.68421   
+Macroaverage precision = 0.73736   	Macroaverage recall = 0.71113   	Macroaverage F1 = 0.72120   
+Macroaverage precision = 0.74287   	Macroaverage recall = 0.74225   	Macroaverage F1 = 0.74181   
+Microaverage precision = microaverage recall = microaverage F1 = 0.74225   
 
 	alpha = 0.000000  		fit_prior = False	
-Macroaverage precision = 0.66812   	Macroaverage recall = 0.64341   	Macroaverage F1 = 0.65184   
-Macroaverage precision = 0.69345   	Macroaverage recall = 0.67839   	Macroaverage F1 = 0.68116   
-Microaverage precision = microaverage recall = microaverage F1 = 0.67839   
+Macroaverage precision = 0.69749   	Macroaverage recall = 0.71723   	Macroaverage F1 = 0.70545   
+Macroaverage precision = 0.74046   	Macroaverage recall = 0.73629   	Macroaverage F1 = 0.73754   
+Microaverage precision = microaverage recall = microaverage F1 = 0.73629   
 
 
 
