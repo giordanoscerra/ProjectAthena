@@ -7,9 +7,12 @@ import wordcloud
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import nltk
+
+from itertools import chain
 
 
-def create_bow(school:str, 
+def create_bow_legacy(school:str, 
                dataframe,
                stopwords:Optional[str|List] = None) -> Dict[str,int]:
     """Returns a bag of words of the given school.
@@ -17,10 +20,8 @@ def create_bow(school:str,
     Returns:
         Dict[str,int]: bag of words
     """
-    texts = []
-    # Put together all the sentences of a given school
-    for stringa in dataframe.loc[dataframe['school'] == school,'sentence_str']:
-        texts.append(stringa)
+
+    texts = [stringa for stringa in dataframe.loc[dataframe['school'] == school,'sentence_str']]
 
     # We now create the bag of word vocabulary
 
@@ -34,6 +35,23 @@ def create_bow(school:str,
     wc_dict = dict(zip(vectorizer.get_feature_names_out(), vector.toarray().sum(axis=0)))
 
     return wc_dict
+
+# Da sistemare!!!!!
+def create_bow(school:str,
+                dataframe,
+                lowercase:bool = True,
+                stopwords:Optional[str|List] = []) -> Dict[str,int]:
+    """Returns a bag of words of the given school.
+
+    Returns:
+        Dict[str,int]: bag of words
+    """
+    # Get the tokenized sentences of the school
+    tokenized_sentences = dataframe.loc[dataframe['school'] == school,'tokenized_txt']
+
+    # Create and return the bag of words
+    return nltk.FreqDist([(w.lower() if lowercase else w) for w in chain.from_iterable(tokenized_sentences) if (w not in stopwords and w.isalnum())])
+
 
 # function that creates the wordcloud
 def make_wordcloud(bow:Dict[str,int], 
