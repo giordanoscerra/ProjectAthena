@@ -36,7 +36,6 @@ def create_bow_legacy(school:str,
 
     return wc_dict
 
-# Da sistemare!!!!!
 def create_bow(school:str,
                 dataframe,
                 lowercase:bool = True,
