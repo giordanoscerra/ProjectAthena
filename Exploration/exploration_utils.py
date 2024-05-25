@@ -137,6 +137,36 @@ def plot_superimposed_distributions(bag_of_words1,
 
     return ax   
 
+def compute_distribution(bow:Dict[str,int],
+                         threshold:float=1) -> Dict[str,float]:
+    """Given a bag of words and a threshold,
+    it computes a distribution over the words which 
+    belong to the top threshold*100% of the words.
+    It never exceeds that threshold, but it could be less.
+    So, it computes how many words in total there have to be retained,
+    and then normalizes the counts of the retained words.
+
+    Args:
+        bow (Dict[str,int]): bag of words
+        threshold (float, optional): Portion of the bag of words to retain. Defaults to 1.
+
+    Returns:
+        distribution (Dict[str,float]): a dictionary representing the (thresholded) distribution
+    """
+    distribution = {}
+    retained_mass = sum(bow.values())*threshold
+    cumulated_sum = 0
+    for word, count in sorted(bow.items(), key=lambda x: x[1], reverse=True):
+        cumulated_sum += count
+        if cumulated_sum > retained_mass:
+            break
+        else:
+            distribution[word] = count
+    final_mass = sum(distribution.values())
+    distribution = {k:v/final_mass for k,v in distribution.items()}
+    return distribution
+
+
 def save_plot(plot, 
               filename:str,
               folder:str='Images', 
