@@ -12,19 +12,20 @@ from scoring import SCHOOLS
 from utilities import Logger, getData
 
 # Load data
-tr, vl, _ = getData(min_chars=200, max_chars=1700)
+#tr, vl, _ = getData(min_chars=200, max_chars=1700)
+tr, vl, _ = getData(min_chars=84)
 batchSize = 50
 num_epochs = 3
 learning_rate = 2e-5
 print(f'training quantity: {len(tr)}', f'validation quantity: {len(vl)}')
 texts_tr = tr['sentence_str']
 labels_tr = tr['school']
-#texts_vl = vl['sentence_str']
-#labels_vl = vl['school']
+texts_vl = vl['sentence_str']
+labels_vl = vl['school']
 
 
 labels_tr = torch.tensor([SCHOOLS.index(label) for label in labels_tr])
-#labels_vl = torch.tensor([SCHOOLS.index(label) for label in labels_vl])
+labels_vl = torch.tensor([SCHOOLS.index(label) for label in labels_vl])
 
 model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=len(SCHOOLS))
 tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
@@ -40,14 +41,14 @@ dataset = TensorDataset(input_ids, attention_texts, labels_tr)
 dataloader_tr = DataLoader(dataset, batch_size=batchSize, shuffle=True)
 
 print('tokenizing validation...')
-#texts_vl = texts_vl.tolist()
-#tok = tokenizer(texts_vl, add_special_tokens=True, padding='max_length', max_length=280, truncation=True)
-#tokenized_texts_vl = tok['input_ids']
-#attention_texts_vl = tok['attention_mask']
-#input_ids_vl = torch.tensor(tokenized_texts_vl)
-#attention_texts_vl = torch.tensor(attention_texts_vl)
-#dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
-#dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
+texts_vl = texts_vl.tolist()
+tok = tokenizer(texts_vl, add_special_tokens=True, padding='max_length', max_length=280, truncation=True)
+tokenized_texts_vl = tok['input_ids']
+attention_texts_vl = tok['attention_mask']
+input_ids_vl = torch.tensor(tokenized_texts_vl)
+attention_texts_vl = torch.tensor(attention_texts_vl)
+dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
+dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
 
 device = torch.device("cuda" if torch.cuda.is_available()
                       else "mps" if torch.backends.mps.is_available()
@@ -97,9 +98,9 @@ for epoch in range(num_epochs):
     model.train()
     loss,acc = compute_epoch(model, dataloader_tr, optimizer, epoch=epoch, device=device)
     logger.add(f'Epoch: {epoch}, TR Loss: {loss:.4f}, TR accuracy: {acc:.2f}')
-    #model.eval()
-    #loss,acc = compute_epoch(model, dataloader_vl, optimizer, backpropagate=False, epoch=epoch, device=device)
-    #logger.add(f'Epoch: {epoch}, VL Loss: {loss:.4f}, VL accuracy: {acc:.2f}')
+    model.eval()
+    loss,acc = compute_epoch(model, dataloader_vl, optimizer, backpropagate=False, epoch=epoch, device=device)
+    logger.add(f'Epoch: {epoch}, VL Loss: {loss:.4f}, VL accuracy: {acc:.2f}')
     model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{epoch}'))
     tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{epoch}'))
 
@@ -108,5 +109,5 @@ print('\nTraining and Validation -> End Time:', end_time.strftime("H%M%S"))
 logger.add("Training and Validation -> End Time: " + end_time.strftime("H%M%S"))
 logger.add("Duration: " + str(end_time - start_time))
 
-#model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{datetime.now().strftime("%d%H%M")}'))
-#tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{datetime.now().strftime("%d%H%M")}'))
+model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_model_{datetime.now().strftime("%d%H%M")}'))
+tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_tokenizer_{datetime.now().strftime("%d%H%M")}'))
