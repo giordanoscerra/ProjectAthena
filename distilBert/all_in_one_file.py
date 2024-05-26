@@ -11,9 +11,12 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import SCHOOLS
 from utilities import Logger, getData
 
+min_chars = 84 # or could be None
+save_string = 'min_chars_'+ str(min_chars) if min_chars is not None else 'full_dataset'
+
 # Load data
 #tr, vl, _ = getData(min_chars=200, max_chars=1700)
-tr, vl, _ = getData(min_chars=84)
+tr, vl, _ = getData(min_chars=min_chars)
 batchSize = 50
 num_epochs = 3
 learning_rate = 2e-5
@@ -101,13 +104,13 @@ for epoch in range(num_epochs):
     model.eval()
     loss,acc = compute_epoch(model, dataloader_vl, optimizer, backpropagate=False, epoch=epoch, device=device)
     logger.add(f'Epoch: {epoch}, VL Loss: {loss:.4f}, VL accuracy: {acc:.2f}')
-    model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{epoch}'))
-    tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{epoch}'))
+    model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_model_{epoch}_{save_string}'))
+    tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'bert_tokenizer_{epoch}_{save_string}'))
 
 end_time = datetime.now()
 print('\nTraining and Validation -> End Time:', end_time.strftime("H%M%S"))
 logger.add("Training and Validation -> End Time: " + end_time.strftime("H%M%S"))
 logger.add("Duration: " + str(end_time - start_time))
 
-model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_model_{datetime.now().strftime("%d%H%M")}'))
-tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_tokenizer_{datetime.now().strftime("%d%H%M")}'))
+model.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_model_{datetime.now().strftime("%d%H%M")}_{save_string}'))
+tokenizer.save_pretrained(os.path.join(sys.path[0], 'tuned',f'final_bert_tokenizer_{datetime.now().strftime("%d%H%M")}_{save_string}'))
