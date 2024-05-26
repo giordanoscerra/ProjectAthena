@@ -35,7 +35,7 @@ tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
 
 print('tokenizing training...')
 texts_tr = texts_tr.tolist()
-tok = tokenizer(texts_tr, add_special_tokens=True, padding='max_length', max_length=280, truncation=True)
+tok = tokenizer(texts_tr, add_special_tokens=True, padding='max_length', max_length=512, truncation=True)
 tokenized_texts = tok['input_ids']
 attention_texts = tok['attention_mask']
 input_ids = torch.tensor(tokenized_texts)
@@ -45,7 +45,7 @@ dataloader_tr = DataLoader(dataset, batch_size=batchSize, shuffle=True)
 
 print('tokenizing validation...')
 texts_vl = texts_vl.tolist()
-tok = tokenizer(texts_vl, add_special_tokens=True, padding='max_length', max_length=280, truncation=True)
+tok = tokenizer(texts_vl, add_special_tokens=True, padding='max_length', max_length=512, truncation=True)
 tokenized_texts_vl = tok['input_ids']
 attention_texts_vl = tok['attention_mask']
 input_ids_vl = torch.tensor(tokenized_texts_vl)
@@ -53,9 +53,7 @@ attention_texts_vl = torch.tensor(attention_texts_vl)
 dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
 dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
 
-device = torch.device("cuda" if torch.cuda.is_available()
-                      else "mps" if torch.backends.mps.is_available()
-                      else "cpu")
+device = torch.device("cuda:0")
 print('device is:',device)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 model.to(device)
