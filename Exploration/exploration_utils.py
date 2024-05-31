@@ -7,9 +7,12 @@ import wordcloud
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import nltk
+
+from itertools import chain
 
 
-def create_bow(school:str, 
+def create_bow_legacy(school:str, 
                dataframe,
                stopwords:Optional[str|List] = None) -> Dict[str,int]:
     """Returns a bag of words of the given school.
@@ -17,10 +20,8 @@ def create_bow(school:str,
     Returns:
         Dict[str,int]: bag of words
     """
-    texts = []
-    # Put together all the sentences of a given school
-    for stringa in dataframe.loc[dataframe['school'] == school,'sentence_str']:
-        texts.append(stringa)
+
+    texts = [stringa for stringa in dataframe.loc[dataframe['school'] == school,'sentence_str']]
 
     # We now create the bag of word vocabulary
 
@@ -34,6 +35,22 @@ def create_bow(school:str,
     wc_dict = dict(zip(vectorizer.get_feature_names_out(), vector.toarray().sum(axis=0)))
 
     return wc_dict
+
+def create_bow(school:str,
+                dataframe,
+                lowercase:bool = True,
+                stopwords:Optional[str|List] = []) -> Dict[str,int]:
+    """Returns a bag of words of the given school.
+
+    Returns:
+        Dict[str,int]: bag of words
+    """
+    # Get the tokenized sentences of the school
+    tokenized_sentences = dataframe.loc[dataframe['school'] == school,'tokenized_txt']
+
+    # Create and return the bag of words
+    return nltk.FreqDist([(w.lower() if lowercase else w) for w in chain.from_iterable(tokenized_sentences) if (w not in stopwords and w.isalnum())])
+
 
 # function that creates the wordcloud
 def make_wordcloud(bow:Dict[str,int], 
@@ -119,6 +136,36 @@ def plot_superimposed_distributions(bag_of_words1,
     ax.legend(fontsize=16)
 
     return ax   
+
+def compute_distribution(bow:Dict[str,int],
+                         threshold:float=1) -> Dict[str,float]:
+    """Given a bag of words and a threshold,
+    it computes a distribution over the words which 
+    belong to the top threshold*100% of the words.
+    It never exceeds that threshold, but it could be less.
+    So, it computes how many words in total there have to be retained,
+    and then normalizes the counts of the retained words.
+
+    Args:
+        bow (Dict[str,int]): bag of words
+        threshold (float, optional): Portion of the bag of words to retain. Defaults to 1.
+
+    Returns:
+        distribution (Dict[str,float]): a dictionary representing the (thresholded) distribution
+    """
+    distribution = {}
+    retained_mass = sum(bow.values())*threshold
+    cumulated_sum = 0
+    for word, count in sorted(bow.items(), key=lambda x: x[1], reverse=True):
+        cumulated_sum += count
+        if cumulated_sum > retained_mass:
+            break
+        else:
+            distribution[word] = count
+    final_mass = sum(distribution.values())
+    distribution = {k:v/final_mass for k,v in distribution.items()}
+    return distribution
+
 
 def save_plot(plot, 
               filename:str,

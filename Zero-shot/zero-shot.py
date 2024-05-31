@@ -2,8 +2,8 @@ import os
 import sys
 import json
 import torch
-# import numpy as np
-# from tqdm import tqdm
+import numpy as np
+from tqdm import tqdm
 from transformers import pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
@@ -11,23 +11,15 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy, SCHOOLS  # Assuming SCHOOLS is a list of school names
 from utilities import getData
 
-def zero_shot():
+def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, folder:str='results/', device:str='cuda'):
 
-    labels_dict = {
-        'Analytic Philosophy': 'analytic',
-        'Aristotelian Philosophy': 'aristotle',
-        'German Idealism Philosophy': 'german_idealism',
-        'Platonic Philosophy': 'plato',
-        'Continental Philosophy': 'continental',
-        'Phenomenological Philosophy': 'phenomenology',
-        'Rationalist Philosophy': 'rationalism',
-        'Empiricist Philosophy': 'empiricism',
-        'Feminist Philosophy': 'feminism',
-        'Capitalist Philosophy': 'capitalism',
-        'Communist Philosophy': 'communism',
-        'Nietzschean Philosophy': 'nietzsche',
-        'Stoic Philosophy': 'stoicism'
-    }
+    # Check if the folder already exists
+    if os.path.exists('Zero-shot/' + folder):
+        print("Folder " + folder + " already exists")
+        return
+
+    if labels_dict is None:
+        labels_dict = {label: label for label in SCHOOLS}
 
     # Check if all strings in SCHOOLS exist as keys in labels_dict
     if all(label in labels_dict.values() for label in SCHOOLS) and len(labels_dict) == len(SCHOOLS):
@@ -37,13 +29,13 @@ def zero_shot():
         return None
 
     # Check if CUDA is available
-    device = 'cuda' if torch.cuda.is_available() else -1  # set device to first GPU, -1 for CPU
+    device = device if torch.cuda.is_available() else -1  # set device to first GPU, -1 for CPU
 
     # Load data
-    min_chars = 84
-    _, vl, _ = getData(min_chars=min_chars)
+    _, vl, _ = getData(min_chars=min_chars, max_chars=max_chars)
     texts_vl = vl['sentence_str'].tolist()
-    labels_vl = vl['school'].tolist()
+    labels_vl = vl['school'].tolist() 
+
     #texts_vl_subsets = np.array_split(texts_vl, 10)
     #labels_vl_subsets = np.array_split(labels_vl, 10)
 
@@ -53,21 +45,22 @@ def zero_shot():
     #model_path = '../' + model_name
     classifier = pipeline("zero-shot-classification", model='facebook/bart-large-mnli', device=device)
 
-    """
+    
     # Initialize an empty list to store the predictions
     predictions = []
+    texts_vl_subsets = np.array_split(texts_vl, 10)
 
     # Process each part separately
     for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
         if len(subset) > 0:
             predictions.extend(classifier(subset.tolist(), SCHOOLS))
-    """
-
-    predictions = classifier(texts_vl, labels_dict.keys())
+    
+    # predictions = classifier(texts_vl, list(labels_dict.keys()))
 
     # Save predictions in an indented JSON file
-    with open('Zero-shot/predictions.json', 'w') as f:
-        
+    os.makedirs('Zero-shot/' + folder, exist_ok=True)
+    with open('Zero-shot/' + folder + 'predictions.json', 'w') as f:
+
         # Convert the predictions list to a JSON string with indentation
         json.dump(predictions, f, indent=4)
 
@@ -91,17 +84,37 @@ def zero_shot():
     }
 
     # Write the JSON string to a file
-    with open('Zero-shot/results.json', 'w') as f:
+    with open('Zero-shot/' + folder + 'results.json', 'w') as f:
 
         # Convert the dictionary to a JSON string
         json.dump(results, f, indent=4)
 
     # Plot the confusion matrix
-    scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot', saveName='zero-shot')
+    scorePhilosophy(predicted_labels, labels_vl, modelName='Zero-shot', subtitle='Zero-shot Classification', saveFolder= 'Zero-shot/'+ folder, saveName='zero-shot')
 
     #{'labels': ['travel', 'dancing', 'cooking'],
     # 'scores': [0.9938651323318481, 0.0032737774308770895, 0.002861034357920289],
     # 'sequence': 'one day I will see the world'}
 
 if __name__ == '__main__':
-    zero_shot()
+
+    labels_dict = {
+        'Analytic Philosophy': 'analytic',
+        'Aristotelian Philosophy': 'aristotle',
+        'German Idealism Philosophy': 'german_idealism',
+        'Platonic Philosophy': 'plato',
+        'Continental Philosophy': 'continental',
+        'Phenomenological Philosophy': 'phenomenology',
+        'Rationalist Philosophy': 'rationalism',
+        'Empiricist Philosophy': 'empiricism',
+        'Feminist Philosophy': 'feminism',
+        'Capitalist Philosophy': 'capitalism',
+        'Communist Philosophy': 'communism',
+        'Nietzschean Philosophy': 'nietzsche',
+        'Stoic Philosophy': 'stoicism'
+    }
+
+    zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/', device='cuda:1')
+    zero_shot(folder='bart-large-mnli_chars_noLabels/', device='cuda:1')
+    zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/', device='cuda:1')
+    zero_shot(labels_dict=labels_dict, folder='bart-large-mnli_chars_phiLabels/', device='cuda:1')

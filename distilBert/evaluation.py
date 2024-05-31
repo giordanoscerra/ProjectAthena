@@ -1,6 +1,6 @@
 import time
 import torch
-from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
+from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, TensorDataset
 import os
@@ -11,27 +11,45 @@ from utilities import getData
 import numpy as np
 from scoring import scorePhilosophy
 
+#pick between 20 and 84
+train_len: int = 84
+#pick between 20 and 84
+val_char: int = 84
+
+if train_len == 84:
+    model_path = './distilBert/tuned/final_bert_model_270246_min_chars_84'
+    tokenizer_path = './distilBert/tuned/final_bert_tokenizer_270246_min_chars_84'
+elif train_len is None:
+    model_path = './distilBert/tuned/final_bert_model_280430_full_dataset'
+    tokenizer_path = './distilBert/tuned/final_bert_tokenizer_280430_full_dataset'
+else:
+    print('Invalid train_len')
+    exit(1)
+    
 # Load the fine-tuned DistilBERT model
-model = DistilBertForSequenceClassification.from_pretrained('./distilBert/tuned/bert_model_1/', local_files_only=True)
+model = DistilBertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+#model = BertForSequenceClassification.from_pretrained(f'./Bert/1_bert_model_162356', local_files_only=True)
 # Load the tokenizer
-tokenizer = DistilBertTokenizer.from_pretrained('./distilBert/tuned/bert_tokenizer_1/', local_files_only=True)
+tokenizer = DistilBertTokenizerFast.from_pretrained(tokenizer_path, local_files_only=True)
+#tokenizer = BertTokenizer.from_pretrained(f'./Bert/1_bert_tokenizer_162356', local_files_only=True)
 
 # Load data
-_, vl, _ = getData(min_chars=200, max_chars=1700)
+_, vl, _ = getData(min_chars=val_char)
 texts_vl = vl['sentence_str']
 texts_vl = texts_vl.tolist()
-encoded_inputs_vl = tokenizer(texts_vl, padding=True, truncation=True, return_tensors='pt', max_length=280)
+encoded_inputs_vl = tokenizer(texts_vl, padding=True, truncation=True, return_tensors='pt', max_length=360)
 labels_vl = vl['school']
 labels_vl = [SCHOOLS.index(label) for label in labels_vl]
 
 validation_dataset = TensorDataset(encoded_inputs_vl['input_ids'], encoded_inputs_vl['attention_mask'], torch.tensor(labels_vl))
-validation_dataloader = DataLoader(validation_dataset, batch_size=50, shuffle=False)
+validation_dataloader = DataLoader(validation_dataset, batch_size=100, shuffle=False)
 
 def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
     device = torch.device("cuda" if torch.cuda.is_available()
                       else "mps" if torch.backends.mps.is_available()
                       else "cpu")
     print('device is:',device)
+    # remember to change this according to free gpu on remote
     model.to(device)
     model.eval()
     correct = 0
@@ -59,12 +77,13 @@ def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
 validation_accuracy, labels, predictions = compute_accuracy(model, validation_dataloader)
 print(f'Validation accuracy: {validation_accuracy}')
 # Save labels and predictions in a file
-np.savetxt('./distilBert/results.txt', np.column_stack((labels, predictions)), fmt='%d')
+#np.savetxt(f'./Bert/Bert_{train_len}/results_{val_char}.txt', np.column_stack((labels, predictions)), fmt='%d')
 # Compute the confusion matrix
-print('max labels:', max(labels))
-print('max predictions:', max(predictions))
-print('min labels:', min(labels))
-print('min predictions:', min(predictions))
 labels = [SCHOOLS[label-1] for label in labels]
 predictions = [SCHOOLS[label-1] for label in predictions]
-scorePhilosophy(predictions, labels, modelName='DistilBERT', subtitle='Validation set', saveName='distilBert/confusion_matrix.png', showConfusionMatrix=True, saveFolder='.')
+print(f'results for training set of {train_len} and validation set of {val_char}')
+scorePhilosophy(predictions, labels, 
+                modelName=f'DistilBert_{train_len}', 
+                subtitle='Validation set', 
+                saveName=f'distilBert/trained_on_{train_len}/confusion_matrix_No1_{val_char}.png', 
+                showConfusionMatrix=True, saveFolder='.')
