@@ -28,8 +28,8 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
 
     # Load data
     _, vl, _ = getData(min_chars=min_chars, max_chars=max_chars)
-    texts_vl = vl['sentence_str'].tolist()[0:10]
-    labels_vl = vl['school'].tolist()[0:10]    
+    texts_vl = vl['sentence_str'].tolist()
+    labels_vl = vl['school'].tolist() 
 
     #texts_vl_subsets = np.array_split(texts_vl, 10)
     #labels_vl_subsets = np.array_split(labels_vl, 10)
@@ -109,5 +109,7 @@ if __name__ == '__main__':
         'Stoic Philosophy': 'stoicism'
     }
 
+    #zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/')
+    #zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/')
     zero_shot(max_chars=83, folder='bart-large-mnli_83-_chars_noLabels/')
     zero_shot(labels_dict=labels_dict, max_chars=83, folder='bart-large-mnli_83-_chars_phiLabels/')
