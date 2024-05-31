@@ -114,7 +114,7 @@ if __name__ == '__main__':
         'Stoic Philosophy': 'stoicism'
     }
 
-    zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/')
-    zero_shot(folder='bart-large-mnli_chars_noLabels/')
-    zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/')
-    zero_shot(labels_dict=labels_dict, folder='bart-large-mnli_chars_phiLabels/')
+    zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/', device='cuda:1')
+    zero_shot(folder='bart-large-mnli_chars_noLabels/', device='cuda:1')
+    zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/', device='cuda:1')
+    zero_shot(labels_dict=labels_dict, folder='bart-large-mnli_chars_phiLabels/', device='cuda:1')
