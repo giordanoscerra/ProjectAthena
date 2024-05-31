@@ -1,6 +1,7 @@
 
 philosophy_data.csv
 /archive
+distilBert/tuned
 /__pycache__
 *.h5
 
