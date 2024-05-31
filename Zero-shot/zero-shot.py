@@ -13,6 +13,11 @@ from utilities import getData
 
 def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, folder:str='results/'):
 
+    # Check if the folder already exists
+    if os.path.exists('Zero-shot/' + folder):
+        print("Folder " + folder + " already exists")
+        return
+
     if labels_dict is None:
         labels_dict = {label: label for label in SCHOOLS}
 
@@ -43,7 +48,7 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
     
     # Initialize an empty list to store the predictions
     predictions = []
-    texts_vl_subsets = np.array_split(texts_vl, 100)
+    texts_vl_subsets = np.array_split(texts_vl, 10)
 
     # Process each part separately
     for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
@@ -109,7 +114,7 @@ if __name__ == '__main__':
         'Stoic Philosophy': 'stoicism'
     }
 
-    #zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/')
-    #zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/')
-    zero_shot(max_chars=83, folder='bart-large-mnli_83-_chars_noLabels/')
-    zero_shot(labels_dict=labels_dict, max_chars=83, folder='bart-large-mnli_83-_chars_phiLabels/')
+    zero_shot(min_chars=84, folder='bart-large-mnli_84+_chars_noLabels/')
+    zero_shot(folder='bart-large-mnli_chars_noLabels/')
+    zero_shot(labels_dict=labels_dict, min_chars=84, folder='bart-large-mnli_84+_chars_phiLabels/')
+    zero_shot(labels_dict=labels_dict, folder='bart-large-mnli_chars_phiLabels/')
