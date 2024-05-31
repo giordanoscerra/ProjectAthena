@@ -40,7 +40,7 @@ def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, cr
     return total_loss/batchIndex, total_accuracy/batchIndex
 
 # Load data
-tr, vl, _ = getData(min_chars=20, max_chars=1700)
+tr, vl, _ = getData(min_chars=83, max_chars=1700)
 batchSize = 38
 num_epochs = 3
 print(len(tr), len(vl))
@@ -72,7 +72,14 @@ logger.add(f"Device: {device}")
 print('Device:', device)
 # Tokenize the data
 tokenizer = BertTokenizer.from_pretrained(model_path)
-tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts]
+#tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding=False) for text in texts_vl]
+#print(tokenized_texts[0])
+#print(type(tokenized_texts[0]))
+#max_len = max([len(text) for text in tokenized_texts])
+#print(max_len)
+#print(tokenizer.decode(tokenized_texts[0]))
+#exit()
+tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=360) for text in texts]
 attention_texts = [[float(i > 0) for i in text] for text in tokenized_texts]
 # Fine-tune BERT
 model = BertForSequenceClassification.from_pretrained(model_path, num_labels=len(SCHOOLS))
