@@ -11,7 +11,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import scorePhilosophy, SCHOOLS  # Assuming SCHOOLS is a list of school names
 from utilities import getData
 
-def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, folder:str='results/'):
+def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, folder:str='results/', device:str='cuda'):
 
     # Check if the folder already exists
     if os.path.exists('Zero-shot/' + folder):
@@ -29,7 +29,7 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
         return None
 
     # Check if CUDA is available
-    device = 'cuda' if torch.cuda.is_available() else -1  # set device to first GPU, -1 for CPU
+    device = device if torch.cuda.is_available() else -1  # set device to first GPU, -1 for CPU
 
     # Load data
     _, vl, _ = getData(min_chars=min_chars, max_chars=max_chars)
