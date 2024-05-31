@@ -41,7 +41,7 @@ class Logger:
     def save(self):
         with open(self.log_path, 'a') as f:
             for message in self.log:
-                f.write(message + '\n')
+                f.write(f'{message}' + '\n')
         self.log = []
 
 def reduceDataset(df:pd.DataFrame, 

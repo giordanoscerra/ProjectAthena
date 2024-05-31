@@ -1,6 +1,6 @@
 import time
 import torch
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
+from transformers import BertForSequenceClassification, BertTokenizer
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, TensorDataset
 import os
@@ -15,26 +15,15 @@ from scoring import scorePhilosophy
 train_len: int = 84
 #pick between 20 and 84
 val_char: int = 84
-
-if train_len == 84:
-    model_path = './distilBert/tuned/final_bert_model_270246_min_chars_84'
-    tokenizer_path = './distilBert/tuned/final_bert_tokenizer_270246_min_chars_84'
-elif train_len is None:
-    model_path = './distilBert/tuned/final_bert_model_280430_full_dataset'
-    tokenizer_path = './distilBert/tuned/final_bert_tokenizer_280430_full_dataset'
-else:
-    print('Invalid train_len')
-    exit(1)
-    
 # Load the fine-tuned DistilBERT model
-model = DistilBertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+model = BertForSequenceClassification.from_pretrained(f'./Bert/Bert_{train_len}/model', local_files_only=True)
 #model = BertForSequenceClassification.from_pretrained(f'./Bert/1_bert_model_162356', local_files_only=True)
 # Load the tokenizer
-tokenizer = DistilBertTokenizerFast.from_pretrained(tokenizer_path, local_files_only=True)
+tokenizer = BertTokenizer.from_pretrained(f'./Bert/Bert_{train_len}/tokenizer', local_files_only=True)
 #tokenizer = BertTokenizer.from_pretrained(f'./Bert/1_bert_tokenizer_162356', local_files_only=True)
 
 # Load data
-_, vl, _ = getData(min_chars=val_char)
+_, vl, _ = getData(min_chars=val_char, max_chars=1700)
 texts_vl = vl['sentence_str']
 texts_vl = texts_vl.tolist()
 encoded_inputs_vl = tokenizer(texts_vl, padding=True, truncation=True, return_tensors='pt', max_length=360)
@@ -49,7 +38,6 @@ def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
                       else "mps" if torch.backends.mps.is_available()
                       else "cpu")
     print('device is:',device)
-    # remember to change this according to free gpu on remote
     model.to(device)
     model.eval()
     correct = 0
@@ -83,7 +71,7 @@ labels = [SCHOOLS[label-1] for label in labels]
 predictions = [SCHOOLS[label-1] for label in predictions]
 print(f'results for training set of {train_len} and validation set of {val_char}')
 scorePhilosophy(predictions, labels, 
-                modelName=f'DistilBert_{train_len}', 
+                modelName=f'BERT_{train_len}', 
                 subtitle='Validation set', 
-                saveName=f'distilBert/trained_on_{train_len}/confusion_matrix_No1_{val_char}.png', 
+                saveName=f'Bert/Bert_{train_len}/confusion_matrix_No1_{val_char}.png', 
                 showConfusionMatrix=True, saveFolder='.')

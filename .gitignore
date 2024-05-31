@@ -2,9 +2,15 @@
 philosophy_data.csv
 /archive
 distilBert/tuned
+Bert/*_model_*
+Bert/*_tokenizer_*
+Bert/Bert*/model
+Bert/Bert*/tokenizer
 /__pycache__
 *.h5
 
+
+*.code-workspace
 .DS_Store
 # Ignore the simple english wikipedia dataset
 SimpleEnglishWikipedia/
