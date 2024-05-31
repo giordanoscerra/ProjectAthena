@@ -43,7 +43,7 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
     
     # Initialize an empty list to store the predictions
     predictions = []
-    texts_vl_subsets = np.array_split(texts_vl, 10)
+    texts_vl_subsets = np.array_split(texts_vl, 100)
 
     # Process each part separately
     for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
