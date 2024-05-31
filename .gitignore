@@ -12,9 +12,14 @@ Bert/Bert*/tokenizer
 
 *.code-workspace
 .DS_Store
+# Ignore the simple english wikipedia dataset
+SimpleEnglishWikipedia/
 
 # .code-workspace files (used by Andrea)
 *.code-workspace
+
+# Wikipedia
+SimpleEnglishWikipedia/
 
 glove.42B.300d.txt
 
