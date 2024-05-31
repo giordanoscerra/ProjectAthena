@@ -2,8 +2,8 @@ import os
 import sys
 import json
 import torch
-# import numpy as np
-# from tqdm import tqdm
+import numpy as np
+from tqdm import tqdm
 from transformers import pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
@@ -28,8 +28,9 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
 
     # Load data
     _, vl, _ = getData(min_chars=min_chars, max_chars=max_chars)
-    texts_vl = vl['sentence_str'].tolist()
-    labels_vl = vl['school'].tolist()
+    texts_vl = vl['sentence_str'].tolist()[0:10]
+    labels_vl = vl['school'].tolist()[0:10]    
+
     #texts_vl_subsets = np.array_split(texts_vl, 10)
     #labels_vl_subsets = np.array_split(labels_vl, 10)
 
@@ -39,17 +40,17 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
     #model_path = '../' + model_name
     classifier = pipeline("zero-shot-classification", model='facebook/bart-large-mnli', device=device)
 
-    """
+    
     # Initialize an empty list to store the predictions
     predictions = []
+    texts_vl_subsets = np.array_split(texts_vl, 10)
 
     # Process each part separately
     for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
         if len(subset) > 0:
             predictions.extend(classifier(subset.tolist(), SCHOOLS))
-    """
-
-    predictions = classifier(texts_vl, list(labels_dict.keys()))
+    
+    # predictions = classifier(texts_vl, list(labels_dict.keys()))
 
     # Save predictions in an indented JSON file
     os.makedirs('Zero-shot/' + folder, exist_ok=True)
