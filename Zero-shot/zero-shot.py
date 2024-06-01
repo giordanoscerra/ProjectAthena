@@ -53,7 +53,7 @@ def zero_shot(labels_dict:dict=None, min_chars:int=None, max_chars:int=None, fol
     # Process each part separately
     for subset in tqdm(texts_vl_subsets, desc="Processing subsets"):
         if len(subset) > 0:
-            predictions.extend(classifier(subset.tolist(), SCHOOLS))
+            predictions.extend(classifier(subset.tolist(), list(labels_dict.keys())))
     
     # predictions = classifier(texts_vl, list(labels_dict.keys()))
 
