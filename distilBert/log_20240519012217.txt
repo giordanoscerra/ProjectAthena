@@ -1,9 +1,0 @@
-Training and Validation -> Start Time: H2217
-Epoch 1/3
-Epoch: 0, TR Loss: 0.8102, TR accuracy: 0.75
-Epoch 2/3
-Epoch: 1, TR Loss: 0.3297, TR accuracy: 0.90
-Epoch 3/3
-Epoch: 2, TR Loss: 0.1747, TR accuracy: 0.95
-Training and Validation -> End Time: H4555
-Duration: 10:23:38.012079
