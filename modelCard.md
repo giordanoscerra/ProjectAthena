@@ -22,6 +22,7 @@ The [History of Philosophy](https://www.kaggle.com/datasets/kouroshalizadeh/hist
 BERT and DistilBERT were pretrained on [BookCorpus](https://yknzhu.wixsite.com/mbweb) and [English Wikipedia](https://en.wikipedia.org/wiki/English_Wikipedia), and have been finetuned by us on the History of Philosophy training set.
 
 Naive Bayes was trained on the History of Philosophy training set, the smoothing hyperparameter has been chosen by comparing validation scores. After model selection, it's been retrained on training+validation set and tested on the test set.
+
 ## Results
 All the model showed a good generalization capability. We report the results of the f1-score macro average (higher is better) measured on a test set with sentences longer than 83 characters:
 - Naive Bayes: 0.81
@@ -29,7 +30,10 @@ All the model showed a good generalization capability. We report the results of 
 - Bert: 0.88
 
 ## Responsability, Safety, Ethical Considerations & Limitations
-We think that an open and transparent approach to machine learning is essential to allow innovation, and more safe product for the end user.
+We think that an open and transparent approach to machine learning is the key to allow innovation, and is essential to reach the goal of deploying safer products for the end user.
+
+The model proposed, although verry accurate are far from being perfect. So, when using them it is important to keep in mind that they can make mistake; also that up to a certain extent philosophy is subjective and complex; many currents can talk about the same concepts in slightly different ways. Any misclassification that can be considered offensive is not intentinal. For this reasons we want to hilight that the models are able to classify the topic of the sentences they analyze and not the intrinsic meaning.
+
 
 
 ## Contributors
