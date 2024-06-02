@@ -1,1 +1,0 @@
-The required packages (just in case) are (for now): scikit-learn, wordcloud, pandas, notebook, matplotlib, numpy, nltk, seaborn
