@@ -24,9 +24,8 @@ All the model showed a good generalization capability. We report the results of 
 - DistilBert: 0.87
 - Bert: 0.88
 
-## Responsability & Safety
-
-## Ethical Considerations and Limitations
+## Responsability, Safety, Ethical Considerations & Limitations
+We think that an open and transparent approach to machine learning is essential to allow innovation, and more safe product for the end user.
 
 
 ## Contributors
