@@ -1,8 +1,7 @@
 import os
 from matplotlib import pyplot as plt
-import numpy as np
 import pandas as pd
-from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classification_report, f1_score, precision_score, recall_score
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
 
 from typing import List
@@ -20,6 +19,14 @@ def scorePhilosophy(prediction: List[str],
                     saveName:str=None, 
                     saveFolder:str='..',
                     showConfusionMatrix:bool=False) -> None:
+    '''
+    This function prints the classification report and plots the confusion matrix.
+    modelName: str, the name of the model (for the title of the confusion matrix)
+    subtitle: str, a subtitle for the confusion matrix
+    saveName: str, the name of the file where the confusion matrix will be saved
+    saveFolder: str, the folder where the confusion matrix will be saved
+    showConfusionMatrix: bool, whether to show the confusion matrix or not
+    '''
     cm = confusion_matrix(ground_truth, prediction, labels=SCHOOLS, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=SCHOOLS)
     disp.plot()
@@ -37,16 +44,9 @@ def scorePhilosophy(prediction: List[str],
     report = classification_report(ground_truth, 
                                    prediction, 
                                    target_names=SCHOOLS,
-                                   #labels=list(range(1,14))
                                    )
     print(report)
     return report
 
 def getData()->pd.DataFrame:
     return pd.read_csv('philosophy_data.csv')
-
-def splitData(data:pd.DataFrame, test_size=0.25)->tuple:
-    return train_test_split(data['sentence_str'], data['school'], test_size=test_size, random_state=42)
-
-def filterShortPhrases(data:pd.DataFrame, numWords)->pd.DataFrame:
-    return data[data['sentence_str'].apply(lambda x: len(x.split())>numWords)]
