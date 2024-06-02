@@ -1,14 +1,12 @@
 import time
 import torch
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
-from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, TensorDataset
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import SCHOOLS
 from utilities import getData
-import numpy as np
 from scoring import scorePhilosophy
 
 #pick between 20 and 84
@@ -19,7 +17,7 @@ val_char: int = 84
 if train_len == 84:
     model_path = './distilBert/tuned/final_bert_model_270246_min_chars_84'
     tokenizer_path = './distilBert/tuned/final_bert_tokenizer_270246_min_chars_84'
-elif train_len is None:
+elif train_len == 20:
     model_path = './distilBert/tuned/final_bert_model_280430_full_dataset'
     tokenizer_path = './distilBert/tuned/final_bert_tokenizer_280430_full_dataset'
 else:
@@ -28,10 +26,8 @@ else:
     
 # Load the fine-tuned DistilBERT model
 model = DistilBertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
-#model = BertForSequenceClassification.from_pretrained(f'./Bert/1_bert_model_162356', local_files_only=True)
 # Load the tokenizer
 tokenizer = DistilBertTokenizerFast.from_pretrained(tokenizer_path, local_files_only=True)
-#tokenizer = BertTokenizer.from_pretrained(f'./Bert/1_bert_tokenizer_162356', local_files_only=True)
 
 # Load data
 _, vl, _ = getData(min_chars=val_char)
@@ -40,10 +36,10 @@ texts_vl = texts_vl.tolist()
 encoded_inputs_vl = tokenizer(texts_vl, padding=True, truncation=True, return_tensors='pt', max_length=360)
 labels_vl = vl['school']
 labels_vl = [SCHOOLS.index(label) for label in labels_vl]
-
 validation_dataset = TensorDataset(encoded_inputs_vl['input_ids'], encoded_inputs_vl['attention_mask'], torch.tensor(labels_vl))
 validation_dataloader = DataLoader(validation_dataset, batch_size=100, shuffle=False)
 
+# Function to compute the accuracy of the model, returns the accuracy, the original labels and the predictions
 def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
     device = torch.device("cuda" if torch.cuda.is_available()
                       else "mps" if torch.backends.mps.is_available()
@@ -76,8 +72,6 @@ def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
 # Compute the accuracy on the validation set
 validation_accuracy, labels, predictions = compute_accuracy(model, validation_dataloader)
 print(f'Validation accuracy: {validation_accuracy}')
-# Save labels and predictions in a file
-#np.savetxt(f'./Bert/Bert_{train_len}/results_{val_char}.txt', np.column_stack((labels, predictions)), fmt='%d')
 # Compute the confusion matrix
 labels = [SCHOOLS[label-1] for label in labels]
 predictions = [SCHOOLS[label-1] for label in predictions]

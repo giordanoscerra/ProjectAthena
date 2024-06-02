@@ -54,7 +54,9 @@ dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
 dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
 
 # set device
-device = torch.device("cuda:1")
+device = torch.device("cuda:1" if torch.cuda.is_available()
+                      else "mps" if torch.backends.mps.is_available()
+                      else "cpu")
 print('device is:',device)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 model.to(device)
