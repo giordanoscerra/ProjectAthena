@@ -12,13 +12,13 @@ from scoring import SCHOOLS
 
 try:
     # Load the fine-tuned DistilBERT model
-    model = DistilBertForSequenceClassification.from_pretrained('./distilBert/tuned/bert_model_2/', local_files_only=True)
+    model = DistilBertForSequenceClassification.from_pretrained('./distilBert/tuned/final_bert_model_280430_full_dataset/', local_files_only=True)
     # Load the tokenizer
-    tokenizer = DistilBertTokenizer.from_pretrained('./distilBert/tuned/bert_tokenizer_2/', local_files_only=True)
+    tokenizer = DistilBertTokenizer.from_pretrained('./distilBert/tuned/final_bert_tokenizer_280430_full_dataset/', local_files_only=True)
 except:
     print('Model not found')
     print('Check the path to the model and tokenizer')
-    print('Correct paths are: ./distilBert/tuned/bert_model_2/ and ./distilBert/tuned/bert_tokenizer_2/')
+    print('Correct paths are: ./distilBert/tuned/final_bert_model_280430_full_dataset/ and ./distilBert/tuned/final_bert_tokenizer_280430_full_dataset/')
     exit(1)
 
 
