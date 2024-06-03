@@ -9,6 +9,10 @@ def getData(validation_size:float=0.2,
             from_folder:str='',
             min_chars:int=None, 
             max_chars:int=None)-> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    '''
+    Load the data from the csv file and split it into train, validation and test sets.
+    The dataset is reduced if min_chars and max_chars are provided.
+    '''
     df = pd.read_csv(os.path.join(from_folder,'philosophy_data.csv'))
     development, test = train_test_split(df, test_size=test_size, stratify=df['school'], random_state=42, shuffle=True)
     #split vslidation ant train from train

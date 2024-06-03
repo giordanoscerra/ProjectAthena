@@ -13,7 +13,12 @@ from utilities import getData, Logger
 from datetime import datetime
 import numpy as np
 
-def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True):
+def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, criterion=nn.functional.cross_entropy, backpropagate=True) -> tuple[float, float]:
+    '''
+    Function to execute one epoch of training or validation
+    backpropagate: if True, the model will be trained else it will be validated
+    return: tuple of loss and accuracy
+    '''
     batchIndex = 0
     total_loss = 0
     total_accuracy = 0
@@ -40,7 +45,7 @@ def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, cr
     return total_loss/batchIndex, total_accuracy/batchIndex
 
 # Load data
-tr, vl, _ = getData(min_chars=83, max_chars=1700)
+tr, vl, _ = getData(min_chars=None, max_chars=1700)
 batchSize = 38
 num_epochs = 3
 print(len(tr), len(vl))
@@ -49,7 +54,7 @@ labels = tr['school']
 texts_vl = vl['sentence_str']
 labels_vl = vl['school']
 
-# BERT model path
+# BERT model path (in the remote machine)
 model_path = "../../../opt/models/bert-base-cased"
 
 # log path
@@ -70,18 +75,13 @@ else:
     print("No GPUs available.")
 logger.add(f"Device: {device}")
 print('Device:', device)
+
 # Tokenize the data
 tokenizer = BertTokenizer.from_pretrained(model_path)
-#tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding=False) for text in texts_vl]
-#print(tokenized_texts[0])
-#print(type(tokenized_texts[0]))
-#max_len = max([len(text) for text in tokenized_texts])
-#print(max_len)
-#print(tokenizer.decode(tokenized_texts[0]))
-#exit()
 tokenized_texts = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=360) for text in texts]
 attention_texts = [[float(i > 0) for i in text] for text in tokenized_texts]
-# Fine-tune BERT
+
+# Load the model
 model = BertForSequenceClassification.from_pretrained(model_path, num_labels=len(SCHOOLS))
 optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)
 model.to(device)
@@ -99,6 +99,7 @@ dataloader = DataLoader(dataset, batch_size=batchSize, shuffle=True)
 # Loss function
 criterion = nn.CrossEntropyLoss()
 
+# Tokenize the validation data
 tokenized_texts_vl = [tokenizer.encode(text, add_special_tokens=True, padding='max_length', max_length=512) for text in texts_vl]
 attention_texts_vl = [[float(i > 0) for i in text] for text in tokenized_texts_vl]
 input_ids_vl = torch.tensor(tokenized_texts_vl)
@@ -106,6 +107,8 @@ attention_texts_vl = torch.tensor(attention_texts_vl)
 labels_vl = torch.tensor([label_to_index[label] for label in labels_vl], dtype=torch.long)
 dataset_vl = TensorDataset(input_ids_vl, attention_texts_vl, labels_vl)
 dataloader_vl = DataLoader(dataset_vl, batch_size=batchSize, shuffle=True)
+
+
 start_time = datetime.now()
 logger.add("Training and Validation -> Start Time: " + start_time.strftime("H%M%S"))
 print('Training + Validation...')
@@ -121,10 +124,7 @@ for epoch in range(num_epochs):
     model.save_pretrained(os.path.join(sys.path[0], f'{epoch}_bert_model_' + datetime.now().strftime("%d%H%M")))
     tokenizer.save_pretrained(os.path.join(sys.path[0], f'{epoch}_bert_tokenizer_' + datetime.now().strftime("%d%H%M")))
     print()
-
 end_time = datetime.now()
-tokenizer.save_pretrained(os.path.join(sys.path[0], 'bert_tokenizer_', datetime.now().strftime("%d%H%M")))
-model.save_pretrained(os.path.join(sys.path[0], 'bert_model_', datetime.now().strftime("%d%H%M")))
 
 logger.add("Training and Validation -> End Time: " + end_time.strftime("H%M%S"))
 logger.add("Training and Validation -> Duration: " + str(end_time - start_time))

@@ -1,20 +1,25 @@
 import time
 import torch
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
-from sklearn.metrics import confusion_matrix
-from torch.utils.data import DataLoader, TensorDataset
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from scoring import SCHOOLS
-from utilities import getData
-import numpy as np
-from scoring import scorePhilosophy
 
-# Load the fine-tuned DistilBERT model
-model = DistilBertForSequenceClassification.from_pretrained('./distilBert/tuned/bert_model_2/', local_files_only=True)
-# Load the tokenizer
-tokenizer = DistilBertTokenizer.from_pretrained('./distilBert/tuned/bert_tokenizer_2/', local_files_only=True)
+###################################################################
+## this file is used to test the model in a more interactive way ##
+###################################################################
+
+try:
+    # Load the fine-tuned DistilBERT model
+    model = DistilBertForSequenceClassification.from_pretrained('./distilBert/tuned/final_bert_model_280430_full_dataset/', local_files_only=True)
+    # Load the tokenizer
+    tokenizer = DistilBertTokenizer.from_pretrained('./distilBert/tuned/final_bert_tokenizer_280430_full_dataset/', local_files_only=True)
+except:
+    print('Model not found')
+    print('Check the path to the model and tokenizer')
+    print('Correct paths are: ./distilBert/tuned/final_bert_model_280430_full_dataset/ and ./distilBert/tuned/final_bert_tokenizer_280430_full_dataset/')
+    exit(1)
 
 
 device = torch.device("cuda" if torch.cuda.is_available()
