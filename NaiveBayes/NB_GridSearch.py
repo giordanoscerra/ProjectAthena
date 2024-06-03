@@ -14,8 +14,8 @@ from sklearn.metrics import precision_recall_fscore_support, f1_score
 from scoring import scorePhilosophy
 from utilities import getData
 
-method = 'tfidf'  # 'count' or 'tfidf'
-saveResults = True # True if you want to save the results in a file
+method = 'count'  # 'count' or 'tfidf'
+saveResults = False # True if you want to save the results in a file
 # file, folder, path... Where to record our numbers
 # Pathing is a nightmare in python...
 FOLDER = os.path.join('NaiveBayes','Results')
@@ -30,7 +30,8 @@ elif method == 'tfidf':
     vectorizer = TfidfVectorizer()
 
 # data import and splitting
-tr, vl, _ = getData(min_chars=84)
+tr, _, _ = getData(min_chars=0)
+_, vl, _ = getData(min_chars=84)
 X_train = tr['sentence_str']
 y_train = tr['school']
 
@@ -84,7 +85,7 @@ for parameters in ParameterGrid(full_grid):
             file.write('\n')
 
     # I choose as a reference metric the microaverage F1
-    pars_results.append((f1_score(y_true=y_val, y_pred=y_pred, average='micro'),parameters))
+    pars_results.append((f1_score(y_true=y_val, y_pred=y_pred, average='macro'),parameters))
 
 # Let's look for the best
 best_f1, best_parameters = sorted(pars_results)[-1]
