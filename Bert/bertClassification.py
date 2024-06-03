@@ -45,7 +45,7 @@ def compute_epoch(model:BertForSequenceClassification, dataloader, optimizer, cr
     return total_loss/batchIndex, total_accuracy/batchIndex
 
 # Load data
-tr, vl, _ = getData(min_chars=83, max_chars=1700)
+tr, vl, _ = getData(min_chars=None, max_chars=1700)
 batchSize = 38
 num_epochs = 3
 print(len(tr), len(vl))

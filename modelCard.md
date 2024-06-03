@@ -1,5 +1,5 @@
 # This is a general model card for the models we created.
-The authors decided that there was no need for multiple model card since all the models have the same objective. And were trained on the same data. The differences are just in the accuracy of such models and in their architecture.
+The authors decided that there was no need for multiple model cards since all the models have the same objective. And were all trained on the same data. The differences are just in the accuracy of such models and in their architecture.
 
 ## Models
 We developed 3 main model
@@ -12,7 +12,7 @@ We developed 3 main model
 **output**: one of 13 classes
 
 ## Hardware and Software
-The training of the transformer based models was done using the HuggingFace _transformer_ library. While the Naive Bayes model was created using _sklearn_ library.
+The training of the transformer based models was done using the HuggingFace `transformer` library. While the Naive Bayes model was created using `scikit-learn` library.
 
 To train the BERT and DistilBERT models we used a _Tesla V100S-PCIE-32GB_ that was provided to us by the university of Pisa. Estimated total emissions for the training and validation of this two model is 3.76 KgCO2eq.
 
@@ -32,7 +32,7 @@ All the model showed a good generalization capability. We report the results of 
 ## Responsability, Safety, Ethical Considerations & Limitations
 We think that an open and transparent approach to machine learning is the key to allow innovation, and is essential to reach the goal of deploying safer products for the end user.
 
-The model proposed, although verry accurate are far from being perfect. So, when using them it is important to keep in mind that they can make mistake; also that up to a certain extent philosophy is subjective and complex; many currents can talk about the same concepts in slightly different ways. Any misclassification that can be considered offensive, or otherwise cause harm, is not intentional. For this reasons we want to highlight that the models are able to classify the topic of the sentences they analyze and not the intrinsic meaning.
+The model proposed, although verry accurate are far from being perfect. So, when using them it is important to keep in mind that they can make mistake; also that up to a certain extent philosophy is subjective and complex; many currents can talk about the same concepts in slightly different ways. Any misclassification that can be considered offensive, or otherwise cause harm, is not intentional. For this reasons we want to highlight that the models are able to classify the topic of the sentences they analyze and not their intrinsic meaning.
 
 
 
