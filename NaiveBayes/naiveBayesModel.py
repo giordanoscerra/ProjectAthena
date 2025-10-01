@@ -17,7 +17,15 @@ def addNegationsToken(phrase:str)->str:
     '''
     Adds a NEG_ token to all words following a negation word
     '''
+    # Replace n't with not
     phrase = re.sub(r"n't", " not", phrase)
+    # \b is to ensure that the negation word is a whole word
+    # \w+ is to match the word following the negation word
+    # \s+ is to match the space between the negation word and the following word
+    # \1 and \2 are backreferences to the matched groups. \1 is the space and \2 is the word
+    # The r before the string is to make it a raw string, so that the backslashes are not treated as escape characters
+    # The lambda function is to replace the matched string with the original space and the word with NEG_ added to it
+    # The flags=re.IGNORECASE is to make the regex case-insensitive
     transformed = re.sub(r'\b(?:not|never|no)\b[\w\s]+', 
                          lambda match: re.sub(r'(\s+)(\w+)', r'\1NEG_\2', match.group(0)), 
                          phrase,
@@ -42,7 +50,7 @@ if __name__ == '__main__':
     vectorizer = CountVectorizer()
     x_train = vectorizer.fit_transform(x_train)
     x_val = vectorizer.transform(x_val)
-# train the model
+# train the model. alpha is the smoothing parameter. fit_prior is whether to learn class prior probabilities or not
     model = MultinomialNB(alpha=0.06, fit_prior=True)
     model.fit(x_train, y_train)
 # test the model

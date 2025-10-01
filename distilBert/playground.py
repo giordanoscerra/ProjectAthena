@@ -27,15 +27,18 @@ device = torch.device("cuda" if torch.cuda.is_available()
                     else "cpu")
 print('device is:',device)
 model.to(device)
+# evaluation mode!
 model.eval()
 userPhrase = input('Enter a phrase: ')
 while userPhrase != 'exit': 
     with torch.no_grad():
         begin = time.time()
+        # Tokenize the user input, again pad and truncate to 280
         encoded_inputs = tokenizer(userPhrase, padding=True, truncation=True, return_tensors='pt', max_length=280)
         inputs = encoded_inputs['input_ids'].to(device)
         attention_mask = encoded_inputs['attention_mask'].to(device)
         outputs = model(input_ids=inputs, attention_mask=attention_mask)
+        # retrieve max logit. the winner!
         predicted_labels = outputs.logits.argmax(dim=1)
         part = time.time() - begin
         print(f'Predicted label: {SCHOOLS[predicted_labels]} in {part:.0f}s')

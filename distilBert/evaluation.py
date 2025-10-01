@@ -14,6 +14,7 @@ train_len: int = 84
 #pick between 20 and 84
 val_char: int = 84
 
+# load the right models and tokenizers
 if train_len == 84:
     model_path = './distilBert/tuned/final_bert_model_270246_min_chars_84'
     tokenizer_path = './distilBert/tuned/final_bert_tokenizer_270246_min_chars_84'
@@ -29,13 +30,16 @@ model = DistilBertForSequenceClassification.from_pretrained(model_path, local_fi
 # Load the tokenizer
 tokenizer = DistilBertTokenizerFast.from_pretrained(tokenizer_path, local_files_only=True)
 
-# Load data
+# Load data for validation using the same min_chars as the training
 _, vl, _ = getData(min_chars=val_char)
 texts_vl = vl['sentence_str']
 texts_vl = texts_vl.tolist()
+# tokenize vl data, padding and truncating to 360 ... which is different than in training.py ... why?
 encoded_inputs_vl = tokenizer(texts_vl, padding=True, truncation=True, return_tensors='pt', max_length=360)
 labels_vl = vl['school']
+# convert labels to numbers
 labels_vl = [SCHOOLS.index(label) for label in labels_vl]
+# same as in training.py
 validation_dataset = TensorDataset(encoded_inputs_vl['input_ids'], encoded_inputs_vl['attention_mask'], torch.tensor(labels_vl))
 validation_dataloader = DataLoader(validation_dataset, batch_size=100, shuffle=False)
 
@@ -52,9 +56,12 @@ def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
     total = 0
     predictions = []
     labels_original = []
+    # torch no grad is useful for inference, it reduces memory consumption for computations that would have otherwise computed gradients
     with torch.no_grad():
         begin = time.time()
         iteration = 0
+        # this is the same as in training.py, but again a little bit different.
+        # i guess we like rewriting always the same things but slightly different huh?
         for inputs, attention_mask, labels in dataloader:
             iteration += 1
             inputs, attention_mask, labels = inputs.to(device), attention_mask.to(device), labels.to(device)
@@ -72,7 +79,7 @@ def compute_accuracy(model, dataloader)->tuple[float, list[int], list[int]]:
 # Compute the accuracy on the validation set
 validation_accuracy, labels, predictions = compute_accuracy(model, validation_dataloader)
 print(f'Validation accuracy: {validation_accuracy}')
-# Compute the confusion matrix
+# Compute the confusion matrix. obscure stuff, don't worry about it.
 labels = [SCHOOLS[label-1] for label in labels]
 predictions = [SCHOOLS[label-1] for label in predictions]
 print(f'results for training set of {train_len} and validation set of {val_char}')

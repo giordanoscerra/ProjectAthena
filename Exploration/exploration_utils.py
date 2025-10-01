@@ -11,7 +11,10 @@ import nltk
 
 from itertools import chain
 
-
+# Questa vecchia versioe usa CountVectorizer. Adesso non 
+# dovrebbe essere più usata da nessuna parte (se non per
+# fare dei raffronti, come in contrastive analysis), 
+# ma la lascio a futura memoria
 def create_bow_legacy(school:str, 
                dataframe,
                stopwords:Optional[str|List] = None) -> Dict[str,int]:

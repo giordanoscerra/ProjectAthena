@@ -53,6 +53,7 @@ if saveResults:
 
 # declare the parameters for grid search
 full_grid = {
+    # here we try a range of values for alpha dividing 1 by a logarithmic scale 
     'alpha': list(np.append(1/np.logspace(0,4,num=10),0)),
     'fit_prior': [True, False]
 }
@@ -65,6 +66,8 @@ for parameters in ParameterGrid(full_grid):
 
     if saveResults:
         with open(FILEPATH, 'a') as file:
+            # fancy way to deal with parameters type. this is just for printing stuff
+            # if it's a boolean, we print it as a string, otherwise as a float
             for key, value in parameters.items():
                 rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
                 file.write(f'\t{key} = ' + rest)
@@ -84,7 +87,7 @@ for parameters in ParameterGrid(full_grid):
             file.write(f'Microaverage precision = microaverage recall = microaverage F1 = {micro:<10.5f}\n')
             file.write('\n')
 
-    # I choose as a reference metric the microaverage F1
+    # I choose as a reference metric the mAcroaverage F1
     pars_results.append((f1_score(y_true=y_val, y_pred=y_pred, average='macro'),parameters))
 
 # Let's look for the best
@@ -94,6 +97,8 @@ if saveResults:
     # print the best parameters on file
     with open(FILEPATH, 'a') as file:
         file.write('\n\n\t\tBest parameters found:\n')
+        # again, fancy way to deal with parameters type. this is just for printing stuff
+        # if it's a boolean, we print it as a string, otherwise as a float
         for key, value in best_parameters.items():
             rest = f'{value}\t' if isinstance(value,bool) else f'{value:<10.6f}\t'
             file.write(f'\t{key} = ' + rest)
@@ -106,7 +111,7 @@ for key, value in best_parameters.items():
     print(f'{key} = {value}')
 print(f'This combination gave a F1 score on the validation set of {best_f1}')
 
-# we can retrain now. Shall we do it on Tr + Val? How??
+# we can retrain now. Shall we do it on Tr + Val? How?? It seems this was ignored.
 model = MultinomialNB(**best_parameters)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_val)
